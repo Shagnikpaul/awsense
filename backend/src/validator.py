@@ -5,14 +5,26 @@ def validate_message(message: str) -> tuple[bool, str]:
     (False, reason) if invalid
     """
 
-    if not message:
+    blocked_patterns = [
+        "ignore previous instructions",
+        "reveal system prompt",
+        "show hidden prompt",
+        "act as root",
+        "jailbreak",
+    ]
+
+    if not message or not message.strip():
         return False, "Message cannot be empty"
-    
-    if len(message.strip()) == 0:
-        return False, "Message cannot be empty"
-    
-    # 500 character limit for messages
+
+    message = message.strip()
+
     if len(message) > 500:
         return False, "Message exceeds 500 character limit"
+
+    lower = message.lower()
+
+    for pattern in blocked_patterns:
+        if pattern in lower:
+            return False, f"Message contains blocked pattern: {pattern}"
 
     return True, ""
