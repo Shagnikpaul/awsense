@@ -3,10 +3,17 @@ from src.response_formatter import format_response
 
 
 def lambda_handler(event, context):
-
+    if event.get("rawPath") == "/health":
+        return {
+            "statusCode": 200,
+            "body": {
+                "status": "healthy",
+                "service": "AWSense"
+            }
+        }
     body = event.get("body", {})
 
-    # if body is a string, try to parse it as JSON 
+    # if body is a string, try to parse it as JSON
     if isinstance(body, str):
         import json
         body = json.loads(body)

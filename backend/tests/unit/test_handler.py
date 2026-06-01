@@ -25,3 +25,12 @@ def test_invalid_request():
     response = lambda_handler(event, None)
 
     assert response["statusCode"] == 400
+
+
+def test_health_check():
+    event = {
+        "rawPath": "/health"
+    }
+    response = lambda_handler(event, None)
+    assert response["statusCode"] == 200
+    assert response["body"]["status"] == "healthy"
