@@ -1,0 +1,14 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "aoss:APIAccessAll"
+      ],
+      "Resource": [
+        "arn:aws:aoss:ap-south-2:094337892389:collection/iuz0pzflqbequ4rcufcc"
+      ]
+    }
+  ]
+}

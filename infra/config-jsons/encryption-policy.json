@@ -1,0 +1,11 @@
+{
+    "Rules": [
+        {
+            "ResourceType": "collection",
+            "Resource": [
+                "collection/awsense-kb"
+            ]
+        }
+    ],
+    "AWSOwnedKey": true
+}
