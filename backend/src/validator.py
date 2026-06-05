@@ -1,7 +1,7 @@
-def validate_message(message: str) -> tuple[bool, str]:
+def validate_message(message: str) -> tuple[bool, str | None]:
     """
     Returns:
-    (True, "") if valid
+    (True, None) if valid
     (False, reason) if invalid
     """
 
@@ -27,4 +27,4 @@ def validate_message(message: str) -> tuple[bool, str]:
         if pattern in lower:
             return False, f"Message contains blocked pattern: {pattern}"
 
-    return True, ""
+    return True, None

@@ -1,5 +1,9 @@
-from validator import validate_message
-from response_formatter import format_response
+from src.validator import validate_message
+from src.response_formatter import format_response
+from src.retriever import Retriever
+from src.prompt_builder import PromptBuilder
+
+
 import json
 
 # CORS headers
@@ -58,12 +62,20 @@ def lambda_handler(event, context):
             "headers": headers
         }
 
+    retriever = Retriever()
+    builder = PromptBuilder()
+
+    docs = retriever.search(message)
+    prompt = builder.build(message, docs)
+
+    answer = docs[0]["text"] if docs else "No relevant context found."
+
     response = format_response(
-        answer=f"Received: {message}",
-        sources=[],
+        answer=answer,
+        sources=[d["source"] for d in docs],
         token_usage={
-            "inputTokens": 0,
-            "outputTokens": 0
+            "inputTokens": len(prompt),
+            "outputTokens": len(answer)
         }
     )
 
