@@ -1,4 +1,4 @@
-You can send this concise report:
+
 
 # AWS Bedrock Knowledge Base Sync Issue
 
