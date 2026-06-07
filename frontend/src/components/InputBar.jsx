@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react"
-import { Send } from "lucide-react"
+import { ArrowUp } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { TopicFilter } from "./TopicFilter"
 
@@ -11,7 +11,7 @@ export function InputBar({ onSendMessage, isLoading, topicFilter, setTopicFilter
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto"
-      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 200)}px`
+      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 120)}px`
     }
   }, [input])
 
@@ -31,42 +31,55 @@ export function InputBar({ onSendMessage, isLoading, topicFilter, setTopicFilter
     }
   }
 
+  // Parse elevated color (assuming #2c261e dark mode or similar)
+  // Tailwind doesn't easily let us use CSS variables with opacity unless defined as rgb/hsl channels.
+  // We'll use a style object for the custom glassmorphism background and shadow.
+  
   return (
-    <div className="bg-background border-t p-4 sm:p-6 w-full max-w-4xl mx-auto flex flex-col gap-3">
-      <div className="flex items-end gap-2">
-        <TopicFilter topicFilter={topicFilter} setTopicFilter={setTopicFilter} />
-        
-        <div className="relative flex-1 flex items-end shadow-sm border rounded-xl bg-muted/30 focus-within:ring-1 focus-within:ring-ring overflow-hidden">
+    <div className="absolute bottom-0 left-0 right-0 z-20 px-4 pb-4">
+      <div 
+        className="max-w-4xl mx-auto w-full backdrop-blur-console p-4 flex flex-col gap-2"
+        style={{
+          background: 'color-mix(in srgb, var(--dg-bg-elevated) 85%, transparent)',
+          border: '1px solid var(--dg-border-glow)',
+          borderTopLeftRadius: '22px',
+          borderTopRightRadius: '22px',
+          borderBottomLeftRadius: '0px',
+          borderBottomRightRadius: '0px',
+          boxShadow: '0 -8px 32px rgba(0,0,0,0.4)',
+        }}
+      >
+        <div className="relative flex flex-col">
           <textarea
             ref={textareaRef}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Ask a question about AWS..."
-            className="w-full max-h-[200px] resize-none bg-transparent border-0 py-3 pl-4 pr-12 text-sm focus-visible:outline-none focus-visible:ring-0 overflow-y-auto"
+            placeholder="Ask anything about AWS architecture, services, or best practices..."
+            className="w-full min-h-[52px] max-h-[120px] resize-none bg-transparent border-none text-dg-textPrimary font-inter text-sm focus-visible:outline-none placeholder:text-dg-textMuted py-2"
             rows={1}
             disabled={isLoading}
             maxLength={500}
           />
-          <div className="absolute right-2 bottom-2">
-            <Button 
-              size="icon" 
-              onClick={handleSend} 
-              disabled={!input.trim() || isLoading}
-              className={`h-8 w-8 rounded-lg transition-colors ${input.trim() && !isLoading ? 'bg-[#FF9900] hover:bg-[#FF9900]/90 text-white' : ''}`}
-            >
-              <Send className="h-4 w-4" />
-              <span className="sr-only">Send message</span>
-            </Button>
-          </div>
+          {input.length > 400 && (
+            <div className={`text-right text-xs mt-1 ${input.length >= 500 ? "text-dg-error" : "text-dg-textMuted"}`}>
+              {input.length} / 500
+            </div>
+          )}
         </div>
-      </div>
-      
-      <div className="flex justify-between items-center text-[10px] text-muted-foreground px-1">
-        <span>AWSense Chatbot</span>
-        <span className={input.length > 450 ? "text-destructive" : ""}>
-          {input.length}/500
-        </span>
+        
+        <div className="flex flex-row justify-between items-center mt-2">
+          <TopicFilter topicFilter={topicFilter} setTopicFilter={setTopicFilter} />
+          
+          <Button 
+            onClick={handleSend} 
+            disabled={!input.trim() || isLoading}
+            className="bg-dg-accent hover:bg-dg-warm rounded-pill px-5 py-2 flex items-center gap-2 h-auto disabled:opacity-40 disabled:cursor-not-allowed text-white font-syne font-semibold text-sm"
+          >
+            <span>Send</span>
+            <ArrowUp className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
     </div>
   )

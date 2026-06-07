@@ -7,13 +7,14 @@ export function ThemeToggle({ darkMode, setDarkMode }) {
     <Button
       variant="ghost"
       size="icon"
+      className="text-dg-textMuted hover:text-dg-textPrimary hover:bg-transparent"
       onClick={() => setDarkMode(!darkMode)}
       title="Toggle theme"
     >
       {darkMode ? (
-        <Sun className="h-5 w-5 text-[#FF9900]" />
+        <Sun className="h-5 w-5" />
       ) : (
-        <Moon className="h-5 w-5 text-slate-700" />
+        <Moon className="h-5 w-5" />
       )}
       <span className="sr-only">Toggle theme</span>
     </Button>

@@ -31,19 +31,19 @@ function App() {
 
   return (
     <TooltipProvider>
-      <div className="flex h-screen w-full bg-background text-foreground overflow-hidden font-sans">
+      <div className="flex h-screen w-full bg-dg-base text-dg-textPrimary overflow-hidden font-sans">
         <Sidebar 
           messages={messages} 
           clearConversation={clearConversation} 
         />
         
-        <div className="flex flex-1 flex-col relative h-full">
+        <div className="flex flex-1 flex-col relative h-full w-full">
           <RateLimitBanner 
             isRateLimited={isRateLimited} 
             setIsRateLimited={setIsRateLimited} 
           />
           
-          <div className="absolute top-4 right-4 z-10">
+          <div className="h-10 flex items-center justify-end px-4 shrink-0">
             <ThemeToggle darkMode={darkMode} setDarkMode={setDarkMode} />
           </div>
 
@@ -52,14 +52,12 @@ function App() {
             isLoading={isLoading} 
           />
           
-          <div className="mt-auto">
-            <InputBar 
-              onSendMessage={sendMessage}
-              isLoading={isLoading}
-              topicFilter={topicFilter}
-              setTopicFilter={setTopicFilter}
-            />
-          </div>
+          <InputBar 
+            onSendMessage={sendMessage}
+            isLoading={isLoading}
+            topicFilter={topicFilter}
+            setTopicFilter={setTopicFilter}
+          />
         </div>
       </div>
     </TooltipProvider>

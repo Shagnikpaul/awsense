@@ -1,61 +1,43 @@
-import { Trash2, MessageSquare, Cloud } from "lucide-react"
+import { Trash2, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
 
 export function Sidebar({ messages, clearConversation }) {
-  // Extract previous topics from history
-  const historyItems = messages
-    .filter(m => m.role === 'user')
-    .slice(-5)
-    .reverse();
-
   return (
-    <div className="w-[260px] h-full flex-col bg-muted/20 border-r hidden md:flex">
-      <div className="p-4 flex items-center gap-2">
-        <div className="w-8 h-8 bg-[#FF9900] rounded-lg flex items-center justify-center text-white shadow-sm">
-          <Cloud className="w-5 h-5" />
-        </div>
-        <span className="font-bold text-lg">AWSense</span>
+    <div className="w-60 shrink-0 h-full flex flex-col bg-dg-surface border-r border-dg-border hidden md:flex">
+      <div className="p-4 flex flex-col gap-1 border-b border-dg-border">
+        <span className="font-syne font-bold text-xl tracking-widest text-dg-textPrimary">AWSense</span>
+        <span className="font-inter text-xs tracking-wide text-dg-textMuted">AWS Docs Assistant</span>
       </div>
       
-      <div className="px-4 py-2 flex-1 overflow-y-auto">
-        <Button 
-          variant="outline" 
-          className="w-full justify-start gap-2 mb-6"
-          onClick={clearConversation}
-        >
-          <MessageSquare className="h-4 w-4" />
-          New chat
-        </Button>
+      <div className="px-4 py-10 flex-1 overflow-y-auto">
+   
         
-        {historyItems.length > 0 && (
-          <div className="space-y-1">
-            <h3 className="text-xs font-semibold text-muted-foreground px-2 mb-2 uppercase tracking-wider">
-              Recent Activity
-            </h3>
-            {historyItems.map((item, i) => (
-              <div 
-                key={i}
-                className="px-3 py-3 text-sm font-medium text-foreground/80 truncate hover:bg-accent hover:text-accent-foreground rounded-md cursor-pointer transition-colors"
-                title={item.content}
-              >
-                {item.content}
-              </div>
-            ))}
+        <div className="space-y-1">
+          <h3 className="font-inter text-xs text-dg-textMuted uppercase tracking-widest px-2 mb-2">
+            Recent
+          </h3>
+          
+          {/* TODO [BACKEND INTEGRATION]: Replace static placeholders with real session history when persistence is implemented */}
+          <div className="px-3 py-3 text-sm font-medium text-dg-textMuted truncate cursor-default opacity-50">
+            How to configure VPC Peering
           </div>
-        )}
+          <div className="px-3 py-3 text-sm font-medium text-dg-textMuted truncate cursor-default opacity-50">
+            S3 Bucket Policy for CloudFront
+          </div>
+          <div className="px-3 py-3 text-sm font-medium text-dg-textMuted truncate cursor-default opacity-50">
+            Lambda execution role permissions
+          </div>
+        </div>
       </div>
 
-      <Separator />
-      
       <div className="p-4">
         <Button 
           variant="ghost" 
-          className="w-full justify-start gap-2 text-destructive hover:text-destructive hover:bg-destructive/10"
+          className="w-full justify-start gap-2 text-dg-textMuted hover:text-dg-accent hover:bg-transparent font-inter text-sm px-2"
           onClick={clearConversation}
         >
           <Trash2 className="h-4 w-4" />
-          Clear conversation
+          Clear Conversation
         </Button>
       </div>
     </div>
