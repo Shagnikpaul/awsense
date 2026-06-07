@@ -1,0 +1,46 @@
+// Mock chat response (matches real API contract for future wiring)
+const mockResponse = {
+  answer: "Amazon S3 (Simple Storage Service) is an object storage service that offers industry-leading scalability, data availability, security, and performance...",
+  sources: [
+    {
+      title: "Amazon S3 Documentation — Getting Started",
+      url: "https://docs.aws.amazon.com/AmazonS3/latest/userguide/GetStartedWithS3.html"
+    },
+    {
+      title: "Amazon S3 FAQs",
+      url: "https://aws.amazon.com/s3/faqs/"
+    }
+  ],
+  tokenUsage: {
+    inputTokens: 312,
+    outputTokens: 128
+  }
+};
+
+// Mock health response
+const mockHealth = {
+  status: "ok",
+  retriever: "local-faiss",
+  inference: "pending-bedrock-access"
+};
+
+// TODO [BACKEND INTEGRATION]: Replace this mock response with a real call to POST /chat
+// Expected request body: { message, sessionId, topicFilter }
+// Expected response: { answer, sources[], tokenUsage }
+// See: chatClient.js → sendMessage()
+export const sendMessage = async ({ message, sessionId, topicFilter }) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(mockResponse);
+    }, 1000);
+  });
+};
+
+// TODO [BACKEND INTEGRATION]: Replace this mock response with a real call to GET /health
+export const checkHealth = async () => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(mockHealth);
+    }, 500);
+  });
+};
