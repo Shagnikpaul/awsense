@@ -1,0 +1,28 @@
+[
+    {
+        "Rules": [
+            {
+                "ResourceType": "index",
+                "Resource": [
+                    "index/awsense-kb/*"
+                ],
+                "Permission": [
+                    "aoss:*"
+                ]
+            },
+            {
+                "ResourceType": "collection",
+                "Resource": [
+                    "collection/awsense-kb"
+                ],
+                "Permission": [
+                    "aoss:*"
+                ]
+            }
+        ],
+        "Principal": [
+            "arn:aws:iam::094337892389:root"
+        ],
+        "Description": "AWSense KB data access"
+    }
+]

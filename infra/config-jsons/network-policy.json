@@ -1,0 +1,20 @@
+[
+  {
+    "Description": "AWSense KB network policy",
+    "Rules": [
+      {
+        "ResourceType": "collection",
+        "Resource": [
+          "collection/awsense-kb"
+        ]
+      },
+      {
+        "ResourceType": "dashboard",
+        "Resource": [
+          "collection/awsense-kb"
+        ]
+      }
+    ],
+    "AllowFromPublic": true
+  }
+]
