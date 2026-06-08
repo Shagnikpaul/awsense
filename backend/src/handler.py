@@ -2,7 +2,7 @@ from src.validator import validate_message
 from src.response_formatter import format_response
 from src.retriever import Retriever
 from src.prompt_builder import PromptBuilder
-
+from src.llm_chat import generate_answer
 
 import json
 
@@ -68,14 +68,15 @@ def lambda_handler(event, context):
     docs = retriever.search(message)
     prompt = builder.build(message, docs)
 
-    answer = docs[0]["text"] if docs else "No relevant context found."
+    # answer = docs[0]["text"] if docs else "No relevant context found."
+    answer, usage = generate_answer(prompt)
 
     response = format_response(
         answer=answer,
-        sources=[d["source"] for d in docs],
+        sources=list(set([d["source"] for d in docs])),
         token_usage={
-            "inputTokens": len(prompt),
-            "outputTokens": len(answer)
+            "inputTokens": usage["inputTokens"],
+            "outputTokens": usage["outputTokens"]
         }
     )
 

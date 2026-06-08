@@ -3,6 +3,15 @@ __pycache__/
 *.py[codz]
 *$py.class
 
+
+# Vector store artifacts
+vector_store/
+backend/vector_store/
+
+# Generated AWS docs
+aws_docs_saves/raw/
+aws_docs_saves/clean/
+
 # C extensions
 *.so
 *.txt

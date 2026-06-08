@@ -11,7 +11,7 @@ def test_lambda_handler_success():
     }
 
     response = lambda_handler(event, None)
-
+    # print('final response:', response)
     assert response["statusCode"] == 200
     assert "body" in response
 

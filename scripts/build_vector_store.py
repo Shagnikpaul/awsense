@@ -1,42 +1,118 @@
-from pathlib import Path
 from sentence_transformers import SentenceTransformer
-import faiss
 import numpy as np
+import faiss
 import pickle
+import json
+from pathlib import Path
+
+
+
+# -------------------------
+# PATHS
+# -------------------------
 
 DOCS_DIR = Path("../aws_docs_saves/clean")
 
+METADATA_FILE = Path("../aws_docs_saves/metadata.json")
+
+VECTOR_STORE_DIR = Path("../vector_store")
+
+
+# -------------------------
+# LOAD METADATA
+# -------------------------
+
+with open(METADATA_FILE, "r", encoding="utf-8") as f:
+    metadata = json.load(f)
+
+
+# -------------------------
+# LOAD EMBEDDING MODEL
+# -------------------------
+
 model = SentenceTransformer("all-MiniLM-L6-v2")
+
+
+# -------------------------
+# STORAGE
+# -------------------------
 
 documents = []
 sources = []
 
+
+# -------------------------
+# PROCESS DOCUMENTS
+# -------------------------
+
 for file in DOCS_DIR.glob("*.txt"):
+
     text = file.read_text(encoding="utf-8")
 
-    chunks = [text[i:i+500] for i in range(0, len(text), 500)]
+    # Simple chunking
+    chunks = [
+        text[i:i + 500]
+        for i in range(0, len(text), 500)
+    ]
 
     for chunk in chunks:
+
         documents.append(chunk)
-        sources.append(file.name)
+
+        # Store rich metadata
+        sources.append({
+            "file": file.name,
+            "title": metadata[file.name]["title"],
+            "url": metadata[file.name]["url"]
+        })
+
 
 print(f"Chunks created: {len(documents)}")
 
-embeddings = model.encode(documents)
+
+# -------------------------
+# CREATE EMBEDDINGS
+# -------------------------
+
+embeddings = model.encode(
+    documents,
+    convert_to_numpy=True
+).astype(np.float32)
+
+
+# -------------------------
+# BUILD FAISS INDEX
+# -------------------------
 
 dimension = embeddings.shape[1]
 
 index = faiss.IndexFlatL2(dimension)
-index.add(np.array(embeddings))
 
-Path("../vector_store").mkdir(exist_ok=True)
+index.add(embeddings)
 
-faiss.write_index(index, "../vector_store/awsense.index")
 
-with open("../vector_store/documents.pkl", "wb") as f:
+# -------------------------
+# SAVE VECTOR STORE
+# -------------------------
+
+VECTOR_STORE_DIR.mkdir(exist_ok=True)
+
+faiss.write_index(
+    index,
+    str(VECTOR_STORE_DIR / "awsense.index")
+)
+
+
+# -------------------------
+# SAVE DOCUMENT METADATA
+# -------------------------
+
+with open(VECTOR_STORE_DIR / "documents.pkl", "wb") as f:
+
     pickle.dump({
         "documents": documents,
         "sources": sources
     }, f)
+
 
 print("Vector DB created successfully")
