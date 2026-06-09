@@ -1,11 +1,20 @@
+import os
 import faiss
 import pickle
 import numpy as np
-from sentence_transformers import SentenceTransformer
+import requests
 from pathlib import Path
 
-# Load ONCE globally (important)
-_model = SentenceTransformer("all-MiniLM-L6-v2")
+
+API_URL = (
+    "https://router.huggingface.co/hf-inference/models/"
+    "sentence-transformers/all-MiniLM-L6-v2/"
+    "pipeline/feature-extraction"
+)
+
+headers = {
+    "Authorization": f"Bearer {os.getenv('HF_TOKEN')}"
+}
 
 
 class Retriever:
@@ -22,12 +31,28 @@ class Retriever:
         self.documents = data["documents"]
         self.sources = data["sources"]
 
-        self.model = _model  # reuse global model
+    def get_embedding(self, text: str):
+
+        response = requests.post(
+            API_URL,
+            headers=headers,
+            json={
+                "inputs": [text]
+            },
+            timeout=30
+        )
+
+        response.raise_for_status()
+
+        embedding = response.json()
+
+        return np.array(
+            embedding,
+            dtype=np.float32
+        )
 
     def search(self, query: str, k: int = 3):
-        query_vec = self.model.encode(
-            [query], convert_to_numpy=True
-        ).astype(np.float32)
+        query_vec = self.get_embedding(query)
 
         distances, indices = self.index.search(query_vec, k)
 

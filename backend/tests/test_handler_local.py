@@ -4,7 +4,7 @@ event = {
     "httpMethod": "POST",
     "path": "/chat",
     "body": {
-        "message": "What is AWS Route 53?"
+        "message": "What is Amazon VPC?"
     }
 }
 

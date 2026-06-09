@@ -73,7 +73,7 @@ def lambda_handler(event, context):
 
     response = format_response(
         answer=answer,
-        sources=list(set([d["source"] for d in docs])),
+        sources=list(set([d["source"]["url"] for d in docs])),
         token_usage={
             "inputTokens": usage["inputTokens"],
             "outputTokens": usage["outputTokens"]
