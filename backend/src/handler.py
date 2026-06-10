@@ -1,10 +1,17 @@
-from src.validator import validate_message
-from src.response_formatter import format_response
-from src.retriever import Retriever
-from src.prompt_builder import PromptBuilder
-from src.llm_chat import generate_answer
+import sys
+from pathlib import Path
+
+current_dir = Path(__file__).resolve().parent.parent
+sys.path.append(str(current_dir / "python_packages"))
 
 import json
+from src.llm_chat import generate_answer
+from src.prompt_builder import PromptBuilder
+from src.retriever import Retriever
+from src.response_formatter import format_response
+from src.validator import validate_message
+
+
 
 # CORS headers
 headers = {

@@ -19,7 +19,7 @@ headers = {
 
 class Retriever:
     def __init__(self):
-        base_path = Path(__file__).resolve().parents[2]
+        base_path = Path(__file__).resolve().parents[1]
 
         self.index = faiss.read_index(
             str(base_path / "vector_store/awsense.index")

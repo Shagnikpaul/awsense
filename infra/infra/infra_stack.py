@@ -1,4 +1,5 @@
 from aws_cdk import (
+    Duration,
     Stack,
     RemovalPolicy,
     aws_s3 as s3,
@@ -26,8 +27,10 @@ class InfraStack(Stack):
             self,
             "AwsenseLambda",
             runtime=_lambda.Runtime.PYTHON_3_12,
-            handler="handler.lambda_handler",
-            code=_lambda.Code.from_asset("../backend/src"),
+            handler="src.handler.lambda_handler",
+            code=_lambda.Code.from_asset("../backend"),
+            timeout=Duration.seconds(30),
+            memory_size=1024,
         )
 
         api = apigw.RestApi(
