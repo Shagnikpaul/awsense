@@ -8,10 +8,7 @@ export function ChatWindow({ messages, isLoading }) {
 
   useEffect(() => {
     if (scrollRef.current) {
-      const scrollContainer = scrollRef.current.querySelector('[data-radix-scroll-area-viewport]')
-      if (scrollContainer) {
-        scrollContainer.scrollTop = scrollContainer.scrollHeight
-      }
+      scrollRef.current.scrollIntoView({ behavior: "smooth" })
     }
   }, [messages, isLoading])
 
@@ -28,7 +25,7 @@ export function ChatWindow({ messages, isLoading }) {
   }
 
   return (
-    <ScrollArea className="flex-1 p-4 sm:p-6 bg-dg-base" ref={scrollRef}>
+    <ScrollArea className="flex-1 min-h-0 p-4 sm:p-6 bg-dg-base">
       <div className="max-w-4xl mx-auto flex flex-col pb-48">
         {messages.map((msg) => (
           <MessageBubble
@@ -54,6 +51,7 @@ export function ChatWindow({ messages, isLoading }) {
             </div>
           </div>
         )}
+        <div ref={scrollRef} />
       </div>
     </ScrollArea>
   )

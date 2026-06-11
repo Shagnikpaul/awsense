@@ -1,5 +1,6 @@
-import { Trash2, Plus } from "lucide-react"
+import { Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Badge } from "./ui/badge";
 
 export function Sidebar({ messages, clearConversation }) {
   return (
@@ -16,7 +17,7 @@ export function Sidebar({ messages, clearConversation }) {
           <h3 className="font-inter text-xs text-dg-textMuted uppercase tracking-widest px-2 mb-2">
             Recent
           </h3>
-          
+          <Badge>Badge</Badge>
           {/* TODO [BACKEND INTEGRATION]: Replace static placeholders with real session history when persistence is implemented */}
           <div className="px-3 py-3 text-sm font-medium text-dg-textMuted truncate cursor-default opacity-50">
             How to configure VPC Peering

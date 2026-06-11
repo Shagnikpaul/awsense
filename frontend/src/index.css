@@ -7,24 +7,24 @@
 @layer base {
   :root {
     /* Desert Glow Dark (Light Mode Overrides) */
-    --dg-bg-base:        #faf6f0;
-    --dg-bg-surface:     #f0e8dc;
-    --dg-bg-elevated:    #e8ddd0;
-    --dg-bg-overlay:     #ddd0c0;
-    --dg-border-subtle:  #c8b8a0;
-    --dg-border-glow:    #c4682a44;
+    --dg-bg-base: #faf6f0;
+    --dg-bg-surface: #f0e8dc;
+    --dg-bg-elevated: #e8ddd0;
+    --dg-bg-overlay: #ddd0c0;
+    --dg-border-subtle: #c8b8a0;
+    --dg-border-glow: #c4682a44;
     --dg-accent-primary: #c4682a;
-    --dg-accent-warm:    #a0501e;
-    --dg-accent-muted:   #e8a070;
-    --dg-olive:          #6a7a4a;
-    --dg-olive-muted:    #8a9a6a;
-    --dg-text-primary:   #2a1e14;
+    --dg-accent-warm: #a0501e;
+    --dg-accent-muted: #e8a070;
+    --dg-olive: #6a7a4a;
+    --dg-olive-muted: #8a9a6a;
+    --dg-text-primary: #2a1e14;
     --dg-text-secondary: #5a4a38;
-    --dg-text-muted:     #9a8a78;
-    --dg-text-code:      #7a4a10;
-    --dg-error:          #b03020;
-    --dg-warning:        #a08010;
-    --dg-success:        #4a7a4a;
+    --dg-text-muted: #9a8a78;
+    --dg-text-code: #7a4a10;
+    --dg-error: #b03020;
+    --dg-warning: #a08010;
+    --dg-success: #4a7a4a;
 
     --background: var(--dg-bg-base);
     --foreground: var(--dg-text-primary);
@@ -34,7 +34,7 @@
     --popover-foreground: var(--dg-text-primary);
     --primary: var(--dg-accent-primary);
     --primary-foreground: #ffffff;
-    --secondary: var(--dg-bg-surface);
+    --secondary: #221e18;
     --secondary-foreground: var(--dg-text-primary);
     --muted: var(--dg-bg-elevated);
     --muted-foreground: var(--dg-text-muted);
@@ -47,27 +47,28 @@
     --ring: var(--dg-accent-primary);
     --radius: 0.5rem;
   }
+
   .dark {
     /* Desert Glow Dark (Dark Mode Base) */
-    --dg-bg-base:        #1a1410;
-    --dg-bg-surface:     #221e18;
-    --dg-bg-elevated:    #2c261e;
-    --dg-bg-overlay:     #332d24;
-    --dg-border-subtle:  #3d3528;
-    --dg-border-glow:    #a0622a55;
+    --dg-bg-base: #1a1410;
+    --dg-bg-surface: #221e18;
+    --dg-bg-elevated: #2c261e;
+    --dg-bg-overlay: #332d24;
+    --dg-border-subtle: #3d3528;
+    --dg-border-glow: #a0622a55;
     --dg-accent-primary: #c4682a;
-    --dg-accent-warm:    #e07c3a;
-    --dg-accent-muted:   #8a4a20;
-    --dg-olive:          #7a8c5a;
-    --dg-olive-muted:    #5a6642;
-    --dg-text-primary:   #f0e8d8;
+    --dg-accent-warm: #e07c3a;
+    --dg-accent-muted: #8a4a20;
+    --dg-olive: #7a8c5a;
+    --dg-olive-muted: #5a6642;
+    --dg-text-primary: #f0e8d8;
     --dg-text-secondary: #b8a898;
-    --dg-text-muted:     #7a6e62;
-    --dg-text-code:      #e8c98a;
-    --dg-error:          #c0392b;
-    --dg-warning:        #d4a017;
-    --dg-success:        #5a8a5a;
-
+    --dg-text-muted: #7a6e62;
+    --dg-text-code: #e8c98a;
+    --dg-error: #c0392b;
+    --dg-warning: #d4a017;
+    --dg-success: #5a8a5a;
+    --dg-badge-muted: #7a6e62;
     --background: var(--dg-bg-base);
     --foreground: var(--dg-text-primary);
     --card: var(--dg-bg-surface);
@@ -76,9 +77,9 @@
     --popover-foreground: var(--dg-text-primary);
     --primary: var(--dg-accent-primary);
     --primary-foreground: #ffffff;
-    --secondary: var(--dg-bg-surface);
+    --secondary: #322a1dd0;
     --secondary-foreground: var(--dg-text-primary);
-    --muted: var(--dg-bg-elevated);
+    --muted: #41392f60;
     --muted-foreground: var(--dg-text-muted);
     --accent: var(--dg-bg-elevated);
     --accent-foreground: var(--dg-text-primary);
@@ -87,14 +88,28 @@
     --border: var(--dg-border-subtle);
     --input: var(--dg-border-subtle);
     --ring: var(--dg-accent-primary);
+  
   }
+
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground font-sans;
   }
+
   html {
     @apply font-sans;
   }
+}
+
+.wave-box {
+  border-radius:
+    28px 28px 10px 28px;
+}
+
+.wave-box-ai {
+  border-radius:
+    28px 28px 28px 10px;
 }

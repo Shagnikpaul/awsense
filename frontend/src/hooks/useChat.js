@@ -45,7 +45,7 @@ export function useChat() {
         role: 'assistant',
         content: response.answer,
         sources: response.sources,
-        tokenUsage: response.tokenUsage,
+        tokenUsage: response.token_usage || response.tokenUsage,
       };
 
       setMessages((prev) => {

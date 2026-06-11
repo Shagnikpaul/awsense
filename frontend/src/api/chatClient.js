@@ -1,46 +1,65 @@
+
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
+
+
 // Mock chat response (matches real API contract for future wiring)
-const mockResponse = {
-  answer: "Amazon S3 (Simple Storage Service) is an object storage service that offers industry-leading scalability, data availability, security, and performance...",
-  sources: [
-    {
-      title: "Amazon S3 Documentation — Getting Started",
-      url: "https://docs.aws.amazon.com/AmazonS3/latest/userguide/GetStartedWithS3.html"
-    },
-    {
-      title: "Amazon S3 FAQs",
-      url: "https://aws.amazon.com/s3/faqs/"
-    }
-  ],
-  tokenUsage: {
-    inputTokens: 312,
-    outputTokens: 128
-  }
-};
+// const mockResponse = {
+//   answer: "Amazon S3 (Simple Storage Service) is an object storage service that offers industry-leading scalability, data availability, security, and performance...",
+//   sources: [
+//     {
+//       title: "Amazon S3 Documentation — Getting Started",
+//       url: "https://docs.aws.amazon.com/AmazonS3/latest/userguide/GetStartedWithS3.html"
+//     },
+//     {
+//       title: "Amazon S3 FAQs",
+//       url: "https://aws.amazon.com/s3/faqs/"
+//     }
+//   ],
+//   tokenUsage: {
+//     inputTokens: 312,
+//     outputTokens: 128
+//   }
+// };
 
-// Mock health response
-const mockHealth = {
-  status: "ok",
-  retriever: "local-faiss",
-  inference: "pending-bedrock-access"
-};
+// // Mock health response
+// const mockHealth = {
+//   status: "ok",
+//   retriever: "local-faiss",
+//   inference: "pending-bedrock-access"
+// };
 
-// TODO [BACKEND INTEGRATION]: Replace this mock response with a real call to POST /chat
+
 // Expected request body: { message, sessionId, topicFilter }
 // Expected response: { answer, sources[], tokenUsage }
 // See: chatClient.js → sendMessage()
+
+// for now sessionID and topicFIlter are not passed to backend, but they will be in future when backend is developed more.
 export const sendMessage = async ({ message, sessionId, topicFilter }) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(mockResponse);
-    }, 1000);
+  const response = await fetch(`${API_BASE_URL}/chat`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": import.meta.env.VITE_API_KEY,
+    },
+    body: JSON.stringify({
+      message,
+    }),
   });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch response");
+  }
+
+  return response.json();
 };
 
-// TODO [BACKEND INTEGRATION]: Replace this mock response with a real call to GET /health
 export const checkHealth = async () => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(mockHealth);
-    }, 500);
-  });
+  const response = await fetch(`${API_BASE_URL}/health`);
+
+  if (!response.ok) {
+    throw new Error("Health check failed");
+  }
+
+  return response.json();
 };

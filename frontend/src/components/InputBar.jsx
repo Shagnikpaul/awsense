@@ -44,8 +44,8 @@ export function InputBar({ onSendMessage, isLoading, topicFilter, setTopicFilter
           border: '1px solid var(--dg-border-glow)',
           borderTopLeftRadius: '22px',
           borderTopRightRadius: '22px',
-          borderBottomLeftRadius: '0px',
-          borderBottomRightRadius: '0px',
+          borderBottomLeftRadius: '22px',
+          borderBottomRightRadius: '22px',
           boxShadow: '0 -8px 32px rgba(0,0,0,0.4)',
         }}
       >
@@ -56,16 +56,14 @@ export function InputBar({ onSendMessage, isLoading, topicFilter, setTopicFilter
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Ask anything about AWS architecture, services, or best practices..."
-            className="w-full min-h-[52px] max-h-[120px] resize-none bg-transparent border-none text-dg-textPrimary font-inter text-sm focus-visible:outline-none placeholder:text-dg-textMuted py-2"
+            className="w-full min-h-[52px] max-h-[120px] resize-none bg-transparent border-none text-dg-textPrimary font-inter text-sm focus-visible:outline-none placeholder:text-dg-textMuted pt-2 pb-6"
             rows={1}
             disabled={isLoading}
             maxLength={500}
           />
-          {input.length > 400 && (
-            <div className={`text-right text-xs mt-1 ${input.length >= 500 ? "text-dg-error" : "text-dg-textMuted"}`}>
-              {input.length} / 500
-            </div>
-          )}
+          <div className={`absolute bottom-0 right-1 text-xs pointer-events-none ${input.length >= 500 ? "text-red-500 font-medium" : "text-dg-textMuted/70"}`}>
+            {input.length} / 500
+          </div>
         </div>
         
         <div className="flex flex-row justify-between items-center mt-2">

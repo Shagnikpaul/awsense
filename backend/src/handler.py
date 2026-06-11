@@ -1,10 +1,14 @@
+# do no change the order of these imports, they are needed to import from the python_packages directory
+
 import sys
 from pathlib import Path
-
 current_dir = Path(__file__).resolve().parent.parent
 sys.path.append(str(current_dir / "python_packages"))
 
+
+
 import json
+import os
 from src.llm_chat import generate_answer
 from src.prompt_builder import PromptBuilder
 from src.retriever import Retriever
@@ -19,11 +23,19 @@ headers = {
     "Access-Control-Allow-Origin": "*"
 }
 
+API_KEY = os.getenv("API_KEY")
+
 
 def lambda_handler(event, context):
     method = event.get("httpMethod")
     path = event.get("path", "")
 
+    request_headers = event.get("headers") or {}
+    request_api_key = request_headers.get("x-api-key")
+
+    # -------------------------
+    # PUBLIC ENDPOINT: HEALTH
+    # -------------------------
     if method == "GET" and path == "/health":
         return {
             "statusCode": 200,
@@ -34,48 +46,73 @@ def lambda_handler(event, context):
             })
         }
 
-    if method != "POST" and path != "/health":
+    # -------------------------
+    # METHOD VALIDATION
+    # -------------------------
+    if path == "/chat" and method != "POST":
         return {
             "statusCode": 405,
             "headers": headers,
-            "body": json.dumps({"error": "Method not allowed"})
+            "body": json.dumps({
+                "error": "Method not allowed"
+            })
         }
 
+    # -------------------------
+    # AUTH (ONLY FOR /chat)
+    # -------------------------
+    if path == "/chat":
+        if request_api_key != API_KEY:
+            return {
+                "statusCode": 401,
+                "headers": headers,
+                "body": json.dumps({
+                    "error": "Unauthorized"
+                })
+            }
+
+    # -------------------------
+    # PARSE BODY
+    # -------------------------
     body = event.get("body") or "{}"
 
-    # if body is a string, try to parse it as JSON
     if isinstance(body, str):
         try:
             body = json.loads(body)
         except Exception:
             return {
                 "statusCode": 400,
+                "headers": headers,
                 "body": json.dumps({
                     "error": "Invalid JSON"
-                }),
-                "headers": headers
+                })
             }
 
     message = body.get("message", "")
 
+    # -------------------------
+    # VALIDATION
+    # -------------------------
     valid, error = validate_message(message)
 
     if not valid:
         return {
             "statusCode": 400,
+            "headers": headers,
             "body": json.dumps({
                 "error": error
-            }),
-            "headers": headers
+            })
         }
 
+    # -------------------------
+    # RAG PIPELINE
+    # -------------------------
     retriever = Retriever()
     builder = PromptBuilder()
 
     docs = retriever.search(message)
     prompt = builder.build(message, docs)
 
-    # answer = docs[0]["text"] if docs else "No relevant context found."
     answer, usage = generate_answer(prompt)
 
     response = format_response(
@@ -87,6 +124,9 @@ def lambda_handler(event, context):
         }
     )
 
+    # -------------------------
+    # SUCCESS RESPONSE
+    # -------------------------
     return {
         "statusCode": 200,
         "headers": headers,

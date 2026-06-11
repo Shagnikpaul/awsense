@@ -29,7 +29,7 @@ export function MessageBubble({ role, content, sources, tokenUsage }) {
         <div className="flex flex-col gap-1 min-w-0">
           <div 
             className={cn(
-              "rounded-squircle px-5 py-4 text-sm leading-relaxed font-inter overflow-hidden",
+              isUser ? "wave-box" : "wave-box-ai"," px-5 py-4 text-sm leading-relaxed font-inter overflow-hidden",
               isUser 
                 ? "bg-dg-accent text-white" 
                 : "bg-dg-surface text-dg-textPrimary"
@@ -40,7 +40,10 @@ export function MessageBubble({ role, content, sources, tokenUsage }) {
             {!isUser && (
               <>
                 <SourceCitations sources={sources} />
-                <TokenUsage tokenUsage={tokenUsage} />
+                <div className="mt-5 flex justify-end">
+                  <TokenUsage tokenUsage={tokenUsage} />
+                </div>
+                
               </>
             )}
           </div>
@@ -51,6 +54,8 @@ export function MessageBubble({ role, content, sources, tokenUsage }) {
             {time}
           </span>
         </div>
+
+
       </div>
     </div>
   )
