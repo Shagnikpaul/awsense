@@ -1,7 +1,4 @@
-
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
-
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 // Mock chat response (matches real API contract for future wiring)
 // const mockResponse = {
@@ -28,7 +25,6 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 //   retriever: "local-faiss",
 //   inference: "pending-bedrock-access"
 // };
-
 
 // Expected request body: { message, sessionId, topicFilter }
 // Expected response: { answer, sources[], tokenUsage }

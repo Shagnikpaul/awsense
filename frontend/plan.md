@@ -15,9 +15,9 @@ Your job today is **only to build the frontend UI**. You will not touch anything
 ## CRITICAL BEHAVIOR RULES
 
 1. **Work only inside the `frontend/` folder.** Do not touch `backend/`, `infra/`, `scripts/`, `k6/`, or any other top-level folder. If you think you need to touch something outside `frontend/`, stop and ask.
-2. **Give instructions or code in chunks.** Do not dump everything at once. After each file or logical group of files, stop and ask: *"Done? Any issues before I continue?"*
+2. **Give instructions or code in chunks.** Do not dump everything at once. After each file or logical group of files, stop and ask: _"Done? Any issues before I continue?"_
 3. **Wait for confirmation** ("done", "ok", "no doubts") before moving to the next chunk.
-4. **Today's hard stop:** Once all frontend UI components are built and the app runs locally with `npm run dev`, tell the user: *"Day 6–7 frontend build is complete. Stop here. Day 7–8 (wiring to backend) is the next session."* Do not begin backend wiring or deployment prep today.
+4. **Today's hard stop:** Once all frontend UI components are built and the app runs locally with `npm run dev`, tell the user: _"Day 6–7 frontend build is complete. Stop here. Day 7–8 (wiring to backend) is the next session."_ Do not begin backend wiring or deployment prep today.
 5. **No tests today.** Frontend unit tests (Jest + React Testing Library) are a separate task for a later session. Do not write any test files.
 
 ---
@@ -25,6 +25,7 @@ Your job today is **only to build the frontend UI**. You will not touch anything
 ## PROJECT CONTEXT (READ FOR UNDERSTANDING — DO NOT BUILD BACKEND)
 
 **AWSense** is a chatbot that:
+
 - Takes AWS-related questions from the user
 - Retrieves relevant chunks from a local FAISS vector index built from AWS documentation pages
 - Generates an answer using an LLM (Amazon Bedrock / Claude Haiku)
@@ -33,6 +34,7 @@ Your job today is **only to build the frontend UI**. You will not touch anything
 The backend is **not yet complete**. The frontend you build today must work standalone with mock/placeholder data wherever real API responses would normally appear. The backend API contract is documented below for reference — use it to shape the frontend's data structures and integration points.
 
 **Backend API contract (reference only — do not implement):**
+
 - `POST /chat` → accepts `{ message, sessionId, topicFilter? }` → returns `{ answer, sources[], tokenUsage }`
 - `GET /health` → returns service status + dependency check
 - HTTP 429 with `retry-after` header when rate limit exceeded (20 requests/session/hour)
@@ -43,6 +45,7 @@ The backend is **not yet complete**. The frontend you build today must work stan
 ## EXISTING PROJECT SETUP
 
 The `frontend/` folder already has a **Vite + React** project bootstrapped with the default template. It has:
+
 - `package.json` with basic React + Vite deps
 - `src/App.jsx` with boilerplate code
 - `src/main.jsx`
@@ -136,16 +139,16 @@ Use **lucide-react** for icons (Send, Trash2, Sun, Moon, ChevronDown, etc.).
 
 ## FUNCTIONAL REQUIREMENTS TO IMPLEMENT
 
-| ID | Requirement | Implementation Notes |
-|---|---|---|
-| F01 | User can type a question and receive an answer | Use mock/placeholder response for now; mark integration point with a comment |
-| F02 | Each answer includes source citations (doc title + URL) | Use `SourceCitations.jsx` with placeholder sources array |
-| F03 | Conversation history shown in session (last 5 turns) | `useChat.js` hook manages messages array; cap display at last 5 turns |
-| F04 | Topic filter dropdown for AWS service category | Dropdown with options: All, EC2, S3, VPC, IAM, Lambda, RDS, CloudFront, Route 53, ELB, CloudWatch |
-| F05 | Token usage indicator per response | Show `inputTokens / outputTokens` below each assistant message using `TokenUsage.jsx` |
-| F06 | Rate-limit warning banner when throttle exceeded | `RateLimitBanner.jsx` — show conditionally when `isRateLimited` state is true |
-| F07 | Responsive layout — desktop and tablet | Tailwind responsive classes; sidebar hidden on mobile |
-| F08 | "Clear conversation" button resets session | Clears messages array in `useChat.js`; generates a new sessionId |
+| ID  | Requirement                                             | Implementation Notes                                                                              |
+| --- | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| F01 | User can type a question and receive an answer          | Use mock/placeholder response for now; mark integration point with a comment                      |
+| F02 | Each answer includes source citations (doc title + URL) | Use `SourceCitations.jsx` with placeholder sources array                                          |
+| F03 | Conversation history shown in session (last 5 turns)    | `useChat.js` hook manages messages array; cap display at last 5 turns                             |
+| F04 | Topic filter dropdown for AWS service category          | Dropdown with options: All, EC2, S3, VPC, IAM, Lambda, RDS, CloudFront, Route 53, ELB, CloudWatch |
+| F05 | Token usage indicator per response                      | Show `inputTokens / outputTokens` below each assistant message using `TokenUsage.jsx`             |
+| F06 | Rate-limit warning banner when throttle exceeded        | `RateLimitBanner.jsx` — show conditionally when `isRateLimited` state is true                     |
+| F07 | Responsive layout — desktop and tablet                  | Tailwind responsive classes; sidebar hidden on mobile                                             |
+| F08 | "Clear conversation" button resets session              | Clears messages array in `useChat.js`; generates a new sessionId                                  |
 
 ---
 
@@ -156,28 +159,29 @@ Since the backend is not connected yet, use this shape for mock/placeholder data
 ```js
 // Mock chat response (matches real API contract for future wiring)
 const mockResponse = {
-  answer: "Amazon S3 (Simple Storage Service) is an object storage service that offers industry-leading scalability, data availability, security, and performance...",
+  answer:
+    "Amazon S3 (Simple Storage Service) is an object storage service that offers industry-leading scalability, data availability, security, and performance...",
   sources: [
     {
       title: "Amazon S3 Documentation — Getting Started",
-      url: "https://docs.aws.amazon.com/AmazonS3/latest/userguide/GetStartedWithS3.html"
+      url: "https://docs.aws.amazon.com/AmazonS3/latest/userguide/GetStartedWithS3.html",
     },
     {
       title: "Amazon S3 FAQs",
-      url: "https://aws.amazon.com/s3/faqs/"
-    }
+      url: "https://aws.amazon.com/s3/faqs/",
+    },
   ],
   tokenUsage: {
     inputTokens: 312,
-    outputTokens: 128
-  }
+    outputTokens: 128,
+  },
 };
 
 // Mock health response
 const mockHealth = {
   status: "ok",
   retriever: "local-faiss",
-  inference: "pending-bedrock-access"
+  inference: "pending-bedrock-access",
 };
 ```
 
@@ -197,6 +201,7 @@ This is important. In every file where a real backend integration point exists, 
 ```
 
 Specifically, mark integration points in:
+
 - `chatClient.js` — every stubbed function
 - `useChat.js` — where mock response is used
 - `RateLimitBanner.jsx` — where `isRateLimited` is currently hardcoded/simulated
@@ -210,34 +215,40 @@ The goal is that a developer picking this up later can `Ctrl+F "TODO [BACKEND IN
 ## COMPONENT-LEVEL NOTES
 
 ### `App.jsx`
+
 - Root layout component
 - Manages `darkMode` state and provides a `ThemeToggle`
 - Apply `dark` class to `<html>` or root `div` based on state
 - Renders `Sidebar` (optional/collapsible) + `ChatWindow` side by side
 
 ### `useChat.js` (custom hook)
+
 - Manages: `messages[]`, `isLoading`, `isRateLimited`, `sessionId`, `topicFilter`
 - `sessionId` generated with `uuid` on mount and on "Clear conversation"
 - `sendMessage(text)` function: appends user message, calls `chatClient.sendMessage()`, appends mock assistant response
 - Keeps only last 5 turns in the displayed conversation (can store full history internally if needed)
 
 ### `chatClient.js`
+
 - Export `sendMessage({ message, sessionId, topicFilter })` — returns mock response after a delay
 - Export `checkHealth()` — returns mock health object
 - All functions clearly stubbed with integration comments
 - This is the **only** file that will need to change when the real backend is ready
 
 ### `ChatWindow.jsx`
+
 - Renders the scrollable list of `MessageBubble` components
 - Auto-scrolls to the bottom on new messages
 - Shows a loading indicator (spinner or pulsing dots) while `isLoading` is true
 
 ### `MessageBubble.jsx`
+
 - Accepts `role` (`"user"` | `"assistant"`) and `content`
 - User messages: right-aligned or left-aligned with different background
 - Assistant messages: show `SourceCitations` and `TokenUsage` below the answer text
 
 ### `InputBar.jsx`
+
 - Text `<textarea>` or `<input>` (shadcn Input)
 - Send button (shadcn Button) — disabled when input is empty or `isLoading` is true
 - `TopicFilter` dropdown embedded inside or beside the input area
@@ -245,26 +256,31 @@ The goal is that a developer picking this up later can `Ctrl+F "TODO [BACKEND IN
 - Character counter visible when approaching 500 char limit
 
 ### `TopicFilter.jsx`
+
 - shadcn Select component
 - Options defined in `constants/awsTopics.js`
 - Passes selected value up to `useChat` via prop or context
 
 ### `TokenUsage.jsx`
+
 - Small muted text below each assistant message
 - Format: `Tokens: 312 in / 128 out`
 
 ### `SourceCitations.jsx`
+
 - Rendered below each assistant answer
 - List of clickable links: `[doc title] → external URL`
 - Open in new tab
 
 ### `RateLimitBanner.jsx`
+
 - Fixed banner at top of chat area
 - Only visible when `isRateLimited === true`
-- Show: *"You've reached the request limit. Please wait before sending more messages."*
+- Show: _"You've reached the request limit. Please wait before sending more messages."_
 - Dismissible with an X button
 
 ### `ThemeToggle.jsx`
+
 - Single icon button: Sun (light) / Moon (dark)
 - Toggles `darkMode` state in `App.jsx`
 
@@ -273,6 +289,7 @@ The goal is that a developer picking this up later can `Ctrl+F "TODO [BACKEND IN
 ## WHAT SUCCESS LOOKS LIKE TODAY
 
 When done, running `npm run dev` should show:
+
 - A polished dark-mode chat UI in the browser
 - User can type a message, hit send, and see a mock assistant reply appear after ~1 second
 - Reply includes placeholder source citations and token usage
@@ -301,4 +318,4 @@ Begin by confirming the current state of `frontend/` — ask the user to share o
 
 ---
 
-*Session: Week 2, Days 6–7 | AWSense Frontend Build | Dark theme, shadcn/ui, Tailwind, React + Vite*
+_Session: Week 2, Days 6–7 | AWSense Frontend Build | Dark theme, shadcn/ui, Tailwind, React + Vite_

@@ -1,6 +1,6 @@
-import { Moon, Sun } from "lucide-react"
+import { Moon, Sun } from "lucide-react";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 
 export function ThemeToggle({ darkMode, setDarkMode }) {
   return (
@@ -11,12 +11,8 @@ export function ThemeToggle({ darkMode, setDarkMode }) {
       onClick={() => setDarkMode(!darkMode)}
       title="Toggle theme"
     >
-      {darkMode ? (
-        <Sun className="h-5 w-5" />
-      ) : (
-        <Moon className="h-5 w-5" />
-      )}
+      {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
       <span className="sr-only">Toggle theme</span>
     </Button>
-  )
+  );
 }

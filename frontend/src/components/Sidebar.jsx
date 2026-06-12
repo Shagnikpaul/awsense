@@ -1,18 +1,20 @@
-import { Trash2 } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Badge } from "./ui/badge";
 
 export function Sidebar({ messages, clearConversation }) {
   return (
     <div className="w-60 shrink-0 h-full flex flex-col bg-dg-surface border-r border-dg-border hidden md:flex">
       <div className="p-4 flex flex-col gap-1 border-b border-dg-border">
-        <span className="font-syne font-bold text-xl tracking-widest text-dg-textPrimary">AWSense</span>
-        <span className="font-inter text-xs font-semibold tracking-wide text-dg-textMuted">AWS Docs Assistant</span>
+        <span className="font-syne font-bold text-xl tracking-widest text-dg-textPrimary">
+          AWSense
+        </span>
+        <span className="font-inter text-xs font-semibold tracking-wide text-dg-textMuted">
+          AWS Docs Assistant
+        </span>
       </div>
-      
+
       <div className="px-4 py-10 flex-1 overflow-y-auto">
-   
-        
         <div className="space-y-1">
           <h3 className="font-inter text-xs text-dg-textMuted uppercase tracking-widest px-2 mb-2">
             Recent
@@ -32,8 +34,8 @@ export function Sidebar({ messages, clearConversation }) {
       </div>
 
       <div className="p-4">
-        <Button 
-          variant="ghost" 
+        <Button
+          variant="ghost"
           className="w-full justify-start gap-2 text-dg-textMuted hover:text-dg-accent hover:bg-transparent font-inter text-sm px-2"
           onClick={clearConversation}
         >
@@ -42,5 +44,5 @@ export function Sidebar({ messages, clearConversation }) {
         </Button>
       </div>
     </div>
-  )
+  );
 }

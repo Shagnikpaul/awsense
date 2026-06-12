@@ -9,5 +9,5 @@ export const AWS_TOPICS = [
   "CloudFront",
   "Route 53",
   "ELB",
-  "CloudWatch"
+  "CloudWatch",
 ];
