@@ -1,21 +1,17 @@
-# do no change the order of these imports, they are needed to import from the python_packages directory
-
+# do no change the order of these imports,
+# they are needed to import from the
+# python_packages directory
 import sys
+import json
+import os
 from pathlib import Path
 current_dir = Path(__file__).resolve().parent.parent
 sys.path.append(str(current_dir / "python_packages"))
-
-
-
-import json
-import os
-from src.llm_chat import generate_answer
-from src.prompt_builder import PromptBuilder
-from src.retriever import Retriever
-from src.response_formatter import format_response
-from src.validator import validate_message
-
-
+from src.llm_chat import generate_answer  # noqa: E402
+from src.prompt_builder import PromptBuilder  # noqa: E402
+from src.retriever import Retriever  # noqa: E402
+from src.response_formatter import format_response  # noqa: E402
+from src.validator import validate_message  # noqa: E402
 
 # CORS headers
 headers = {
