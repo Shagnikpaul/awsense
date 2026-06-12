@@ -13,3 +13,6 @@ jobs:
     steps:
       - name: Placeholder
         run: echo "CI pipeline started"
+        
+      - name: Checkout repository
+        uses: actions/checkout@v4
