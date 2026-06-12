@@ -42,3 +42,7 @@ jobs:
       - name: Install backend dependencies
         run: pip install -r requirements.txt
         working-directory: backend
+      
+      - name: Run flake8
+        run: flake8 src tests
+        working-directory: backend
