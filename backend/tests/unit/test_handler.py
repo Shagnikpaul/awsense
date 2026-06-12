@@ -5,9 +5,7 @@ def test_lambda_handler_success():
     event = {
         "httpMethod": "POST",
         "path": "/chat",
-        "body": {
-            "message": "What is AWS Lambda?"
-        }
+        "body": {"message": "What is AWS Lambda?"},
     }
 
     response = lambda_handler(event, None)
@@ -17,11 +15,7 @@ def test_lambda_handler_success():
 
 
 def test_lambda_handler_invalid_method():
-    event = {
-        "httpMethod": "GET",
-        "path": "/chat",
-        "body": {}
-    }
+    event = {"httpMethod": "GET", "path": "/chat", "body": {}}
 
     response = lambda_handler(event, None)
 
@@ -29,13 +23,7 @@ def test_lambda_handler_invalid_method():
 
 
 def test_lambda_handler_empty_message():
-    event = {
-        "httpMethod": "POST",
-        "path": "/chat",
-        "body": {
-            "message": ""
-        }
-    }
+    event = {"httpMethod": "POST", "path": "/chat", "body": {"message": ""}}
 
     response = lambda_handler(event, None)
 

@@ -46,3 +46,7 @@ jobs:
       - name: Run flake8
         run: flake8 src tests
         working-directory: backend
+
+      - name: Check Black formatting
+        run: black --check src tests
+        working-directory: backend
