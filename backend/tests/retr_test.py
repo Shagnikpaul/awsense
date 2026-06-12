@@ -1,5 +1,4 @@
 from src.retriever import Retriever
-import requests
 
 r = Retriever()
 results = r.search("What is AWS Route 53?")
