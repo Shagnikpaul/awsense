@@ -1,0 +1,122 @@
+{
+    "AWSEC2_latest_UserGuide_concepts.txt": {
+        "title": "What is Amazon EC2? - Amazon Elastic Compute Cloud",
+        "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/concepts.html"
+    },
+    "AWSEC2_latest_UserGuide_Instances.txt": {
+        "title": "Amazon EC2 instances - Amazon Elastic Compute Cloud",
+        "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Instances.html"
+    },
+    "AWSEC2_latest_UserGuide_ec2-security-groups.txt": {
+        "title": "Amazon EC2 security groups for your EC2 instances - Amazon Elastic Compute Cloud",
+        "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-security-groups.html"
+    },
+    "AmazonS3_latest_userguide_Welcome.txt": {
+        "title": "What is Amazon S3? - Amazon Simple Storage Service",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html"
+    },
+    "AmazonS3_latest_userguide_bucketnamingrules.txt": {
+        "title": "General purpose bucket naming rules - Amazon Simple Storage Service",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucketnamingrules.html"
+    },
+    "AmazonS3_latest_userguide_security-best-practices.txt": {
+        "title": "Security best practices for Amazon S3 - Amazon Simple Storage Service",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/security-best-practices.html"
+    },
+    "IAM_latest_UserGuide_introduction.txt": {
+        "title": "What is IAM? - AWS Identity and Access Management",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html"
+    },
+    "IAM_latest_UserGuide_access_policies.txt": {
+        "title": "Policies and permissions in AWS Identity and Access Management - AWS Identity and Access Management",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html"
+    },
+    "IAM_latest_UserGuide_best-practices.txt": {
+        "title": "Security best practices in IAM - AWS Identity and Access Management",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html"
+    },
+    "lambda_latest_dg_welcome.txt": {
+        "title": "What is AWS Lambda? - AWS Lambda",
+        "url": "https://docs.aws.amazon.com/lambda/latest/dg/welcome.html"
+    },
+    "lambda_latest_dg_lambda-runtime-environment.txt": {
+        "title": "Understanding the Lambda execution environment lifecycle - AWS Lambda",
+        "url": "https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtime-environment.html"
+    },
+    "lambda_latest_dg_configuration-memory.txt": {
+        "title": "Configure Lambda function memory - AWS Lambda",
+        "url": "https://docs.aws.amazon.com/lambda/latest/dg/configuration-memory.html"
+    },
+    "vpc_latest_userguide_what-is-amazon-vpc.txt": {
+        "title": "What is Amazon VPC? - Amazon Virtual Private Cloud",
+        "url": "https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-vpc.html"
+    },
+    "vpc_latest_userguide_VPC_Subnets.txt": {
+        "title": "How Amazon VPC works - Amazon Virtual Private Cloud",
+        "url": "https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Subnets.html"
+    },
+    "vpc_latest_userguide_vpc-security-groups.txt": {
+        "title": "Control traffic to your AWS resources using security groups - Amazon Virtual Private Cloud",
+        "url": "https://docs.aws.amazon.com/vpc/latest/userguide/vpc-security-groups.html"
+    },
+    "AmazonRDS_latest_UserGuide_Welcome.txt": {
+        "title": "What is Amazon Relational Database Service (Amazon RDS)? - Amazon Relational Database Service",
+        "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Welcome.html"
+    },
+    "AmazonRDS_latest_UserGuide_CHAP_BestPractices.txt": {
+        "title": "Best practices for Amazon RDS - Amazon Relational Database Service",
+        "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_BestPractices.html"
+    },
+    "AmazonRDS_latest_UserGuide_USER_CreateDBInstance.txt": {
+        "title": "Creating an Amazon RDS DB instance - Amazon Relational Database Service",
+        "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_CreateDBInstance.html"
+    },
+    "AmazonCloudFront_latest_DeveloperGuide_Introduction.txt": {
+        "title": "What is Amazon CloudFront? - Amazon CloudFront",
+        "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html"
+    },
+    "AmazonCloudFront_latest_DeveloperGuide_DownloadDistValuesCacheBehavior.txt": {
+        "title": "Cache behavior settings - Amazon CloudFront",
+        "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/DownloadDistValuesCacheBehavior.html"
+    },
+    "AmazonCloudFront_latest_DeveloperGuide_private-content-restricting-access-to-s3.txt": {
+        "title": "Restrict access to an Amazon S3 origin - Amazon CloudFront",
+        "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-s3.html"
+    },
+    "Route53_latest_DeveloperGuide_Welcome.txt": {
+        "title": "What is Amazon Route\u00c2\u00a053? - Amazon Route 53",
+        "url": "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/Welcome.html"
+    },
+    "Route53_latest_DeveloperGuide_routing-policy.txt": {
+        "title": "Choosing a routing policy - Amazon Route 53",
+        "url": "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy.html"
+    },
+    "Route53_latest_DeveloperGuide_hosted-zones-working-with.txt": {
+        "title": "Working with hosted zones - Amazon Route 53",
+        "url": "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/hosted-zones-working-with.html"
+    },
+    "elasticloadbalancing_latest_userguide_what-is-load-balancing.txt": {
+        "title": "What is Elastic Load Balancing? - Elastic Load Balancing",
+        "url": "https://docs.aws.amazon.com/elasticloadbalancing/latest/userguide/what-is-load-balancing.html"
+    },
+    "elasticloadbalancing_latest_application_introduction.txt": {
+        "title": "What is an Application Load Balancer? - Elastic Load Balancing",
+        "url": "https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html"
+    },
+    "elasticloadbalancing_latest_network_introduction.txt": {
+        "title": "What is a Network Load Balancer? - Elastic Load Balancing",
+        "url": "https://docs.aws.amazon.com/elasticloadbalancing/latest/network/introduction.html"
+    },
+    "AmazonCloudWatch_latest_monitoring_WhatIsCloudWatch.txt": {
+        "title": "What is Amazon CloudWatch? - Amazon CloudWatch",
+        "url": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/WhatIsCloudWatch.html"
+    },
+    "AmazonCloudWatch_latest_monitoring_AlarmThatSendsEmail.txt": {
+        "title": "Using Amazon CloudWatch alarms - Amazon CloudWatch",
+        "url": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html"
+    },
+    "AmazonCloudWatch_latest_logs_WhatIsCloudWatchLogs.txt": {
+        "title": "What is Amazon CloudWatch Logs? - Amazon CloudWatch Logs",
+        "url": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/WhatIsCloudWatchLogs.html"
+    }
+}
