@@ -33,3 +33,8 @@ jobs:
       - name: Check Prettier formatting
         run: npm run format -- --check
         working-directory: frontend
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
