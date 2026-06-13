@@ -5,7 +5,7 @@ def test_format_response_structure():
     response = format_response(
         answer="AWS Lambda is serverless compute.",
         sources=["doc1.txt", "doc2.txt"],
-        token_usage={"inputTokens": 10, "outputTokens": 20}
+        token_usage={"inputTokens": 10, "outputTokens": 20},
     )
 
     assert "answer" in response
@@ -17,7 +17,7 @@ def test_format_response_values():
     response = format_response(
         answer="hello",
         sources=["a.txt"],
-        token_usage={"inputTokens": 1, "outputTokens": 2}
+        token_usage={"inputTokens": 1, "outputTokens": 2},
     )
 
     assert response["answer"] == "hello"

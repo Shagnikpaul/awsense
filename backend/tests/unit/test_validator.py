@@ -1,4 +1,3 @@
-import pytest
 from src.validator import validate_message
 
 

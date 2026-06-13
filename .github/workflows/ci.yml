@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    branches: ['**']
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Placeholder
+        run: echo "CI pipeline started"
+
+      - name: Checkout repository
+        uses: actions/checkout@v6
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 20
+
+      - name: Install frontend dependencies
+        run: npm ci
+        working-directory: frontend
+      
+      - name: Run ESLint
+        run: npm run lint
+        working-directory: frontend
+      
+      - name: Check Prettier formatting
+        run: npm run format -- --check
+        working-directory: frontend
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Install backend dependencies
+        run: pip install -r requirements.txt
+        working-directory: backend
+      
+      - name: Run flake8
+        run: flake8 src tests
+        working-directory: backend
+
+      - name: Check Black formatting
+        run: black --check src tests
+        working-directory: backend
+
+      - name: Run pytest with coverage
+        run: pytest --cov=src --cov-report=html
+        working-directory: backend
