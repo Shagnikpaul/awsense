@@ -3,6 +3,7 @@ import numpy as np
 
 from src.retriever import Retriever
 
+
 @patch("src.retriever.faiss.read_index")
 @patch("src.retriever.pickle.load")
 @patch("builtins.open", new_callable=MagicMock)

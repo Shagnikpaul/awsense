@@ -1,6 +1,7 @@
 from groq import Groq
 import os
 
+
 def generate_answer(prompt: str) -> tuple[str | None, dict]:
     client = Groq(api_key=os.getenv("GROQ_API_KEY"))
     response = client.chat.completions.create(
