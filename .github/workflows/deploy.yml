@@ -48,3 +48,26 @@ jobs:
           name: lambda-package
           path: backend/lambda.zip
 
+  integration-test:
+  needs: [build]
+  runs-on: ubuntu-latest
+
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v6
+
+    - name: Setup Python
+      uses: actions/setup-python@v6
+      with:
+        python-version: "3.12"
+
+    - name: Install backend dependencies
+      working-directory: backend
+      run: |
+        pip install -r requirements.txt
+        pip install pytest
+
+    - name: Run integration tests
+      working-directory: backend
+      run: |
+        pytest tests/integration -v
