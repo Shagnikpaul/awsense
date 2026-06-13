@@ -1,4 +1,4 @@
-import { Link2, ExternalLink } from "lucide-react"
+import { Link2, ExternalLink } from "lucide-react";
 import {
   Item,
   ItemActions,
@@ -6,14 +6,16 @@ import {
   ItemGroup,
   ItemMedia,
   ItemTitle,
-} from "@/components/ui/item"
+} from "@/components/ui/item";
 
 export function SourceCitations({ sources }) {
   if (!sources || sources.length === 0) return null;
 
   return (
     <div className="mt-4 flex flex-col gap-2 pt-5">
-      <span className="font-inter text-xs text-dg-textMuted uppercase tracking-widest">Sources</span>
+      <span className="font-inter text-xs text-dg-textMuted uppercase tracking-widest">
+        Sources
+      </span>
       <ItemGroup className="flex flex-col gap-2">
         {sources.map((source, idx) => (
           <Item key={idx} size="xs" asChild>
@@ -41,6 +43,5 @@ export function SourceCitations({ sources }) {
         ))}
       </ItemGroup>
     </div>
-  )
+  );
 }
-

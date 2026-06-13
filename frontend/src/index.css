@@ -88,7 +88,6 @@
     --border: var(--dg-border-subtle);
     --input: var(--dg-border-subtle);
     --ring: var(--dg-accent-primary);
-  
   }
 
   * {
@@ -105,11 +104,9 @@
 }
 
 .wave-box {
-  border-radius:
-    28px 28px 10px 28px;
+  border-radius: 28px 28px 10px 28px;
 }
 
 .wave-box-ai {
-  border-radius:
-    28px 28px 28px 10px;
+  border-radius: 28px 28px 28px 10px;
 }

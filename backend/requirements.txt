@@ -3,3 +3,10 @@ faiss-cpu==1.14.2
 groq==1.4.0
 numpy==1.26.4
 requests
+
+
+# dev
+flake8
+black
+pytest
+pytest-cov

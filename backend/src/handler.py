@@ -1,27 +1,21 @@
-# do no change the order of these imports, they are needed to import from the python_packages directory
-
+# do no change the order of these imports,
+# they are needed to import from the
+# python_packages directory
 import sys
-from pathlib import Path
-current_dir = Path(__file__).resolve().parent.parent
-sys.path.append(str(current_dir / "python_packages"))
-
-
-
 import json
 import os
-from src.llm_chat import generate_answer
-from src.prompt_builder import PromptBuilder
-from src.retriever import Retriever
-from src.response_formatter import format_response
-from src.validator import validate_message
+from pathlib import Path
 
-
+current_dir = Path(__file__).resolve().parent.parent
+sys.path.append(str(current_dir / "python_packages"))
+from src.llm_chat import generate_answer  # noqa: E402
+from src.prompt_builder import PromptBuilder  # noqa: E402
+from src.retriever import Retriever  # noqa: E402
+from src.response_formatter import format_response  # noqa: E402
+from src.validator import validate_message  # noqa: E402
 
 # CORS headers
-headers = {
-    "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": "*"
-}
+headers = {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"}
 
 API_KEY = os.getenv("API_KEY")
 
@@ -40,10 +34,7 @@ def lambda_handler(event, context):
         return {
             "statusCode": 200,
             "headers": headers,
-            "body": json.dumps({
-                "status": "healthy",
-                "service": "AWSense"
-            })
+            "body": json.dumps({"status": "healthy", "service": "AWSense"}),
         }
 
     # -------------------------
@@ -53,9 +44,7 @@ def lambda_handler(event, context):
         return {
             "statusCode": 405,
             "headers": headers,
-            "body": json.dumps({
-                "error": "Method not allowed"
-            })
+            "body": json.dumps({"error": "Method not allowed"}),
         }
 
     # -------------------------
@@ -66,9 +55,7 @@ def lambda_handler(event, context):
             return {
                 "statusCode": 401,
                 "headers": headers,
-                "body": json.dumps({
-                    "error": "Unauthorized"
-                })
+                "body": json.dumps({"error": "Unauthorized"}),
             }
 
     # -------------------------
@@ -83,9 +70,7 @@ def lambda_handler(event, context):
             return {
                 "statusCode": 400,
                 "headers": headers,
-                "body": json.dumps({
-                    "error": "Invalid JSON"
-                })
+                "body": json.dumps({"error": "Invalid JSON"}),
             }
 
     message = body.get("message", "")
@@ -99,9 +84,7 @@ def lambda_handler(event, context):
         return {
             "statusCode": 400,
             "headers": headers,
-            "body": json.dumps({
-                "error": error
-            })
+            "body": json.dumps({"error": error}),
         }
 
     # -------------------------
@@ -120,15 +103,11 @@ def lambda_handler(event, context):
         sources=list(set([d["source"]["url"] for d in docs])),
         token_usage={
             "inputTokens": usage["inputTokens"],
-            "outputTokens": usage["outputTokens"]
-        }
+            "outputTokens": usage["outputTokens"],
+        },
     )
 
     # -------------------------
     # SUCCESS RESPONSE
     # -------------------------
-    return {
-        "statusCode": 200,
-        "headers": headers,
-        "body": json.dumps(response)
-    }
+    return {"statusCode": 200, "headers": headers, "body": json.dumps(response)}

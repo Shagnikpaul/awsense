@@ -1,4 +1,4 @@
-import { AWS_TOPICS } from "@/constants/awsTopics"
+import { AWS_TOPICS } from "@/constants/awsTopics";
 import {
   Select,
   SelectContent,
@@ -6,9 +6,8 @@ import {
   SelectTrigger,
   SelectValue,
   SelectGroup,
-  SelectLabel
-} from "@/components/ui/select"
-
+  SelectLabel,
+} from "@/components/ui/select";
 
 export function TopicFilter({ topicFilter, setTopicFilter }) {
   return (
@@ -21,12 +20,16 @@ export function TopicFilter({ topicFilter, setTopicFilter }) {
         <SelectGroup>
           <SelectLabel>AWS Topics</SelectLabel>
           {AWS_TOPICS.map((topic) => (
-            <SelectItem key={topic} value={topic} className="focus:bg-dg-elevated focus:text-dg-accent cursor-pointer rounded-lg">
+            <SelectItem
+              key={topic}
+              value={topic}
+              className="focus:bg-dg-elevated focus:text-dg-accent cursor-pointer rounded-lg"
+            >
               {topic}
             </SelectItem>
           ))}
         </SelectGroup>
       </SelectContent>
     </Select>
-  )
+  );
 }
