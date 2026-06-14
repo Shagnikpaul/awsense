@@ -124,7 +124,7 @@ jobs:
         uses: actions/download-artifact@v7
         with:
           name: vector-store
-          path: backend
+          path: backend/vector_store
 
       # -------------------------
       # SETUP NODE (for CDK CLI)
@@ -166,7 +166,16 @@ jobs:
         uses: actions/download-artifact@v7
         with:
           name: frontend-dist
-          path: frontend
+          path: frontend/dist
+
+      # final verification of the artifacts before cdk packaging
+      - name: Verify deployment assets
+        run: |
+          test -f backend/vector_store/awsense.index
+          test -f backend/vector_store/documents.pkl
+          test -d backend/python_packages
+          test -f frontend/dist/index.html
+
 
       - name: Bootstrap CDK
         run: |
