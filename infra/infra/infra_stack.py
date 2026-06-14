@@ -58,7 +58,10 @@ class InfraStack(Stack):
         s3deploy.BucketDeployment(
             self,
             "DeployFrontend",
-            sources=[s3deploy.Source.asset("../frontend/dist")],
+            sources=[s3deploy.Source.asset("../frontend")], 
+            # since github actions is downloading the 
+            # frontend artifact to the frontend folder, 
+            # we need to point to that folder
             destination_bucket=frontend_bucket,
             distribution=distribution,
             distribution_paths=["/*"],
