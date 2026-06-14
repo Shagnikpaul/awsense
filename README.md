@@ -10,12 +10,9 @@ A full-stack RAG chatbot that answers questions about AWS services and architect
 
 ## Overview
 
-AWSense takes a natural language question about AWS, retrieves the most relevant chunks from a local knowledge base built from official AWS documentation, and generates a cited answer using an LLM. Built as a 1-month solo internship project alongside AWS Solutions Architect Associate (SAA-C03) study.
+AWSense takes a natural language question about AWS, retrieves the most relevant chunks from a local knowledge base built from official AWS documentation, and generates a cited answer using an LLM. Built as a 1-month project alongside AWS Solutions Architect Associate (SAA-C03) study.
 
-**Ask it things like:**
-- *"How does S3 versioning work?"*
-- *"What's the difference between a Security Group and a NACL?"*
-- *"How do I configure a Lambda function with a VPC?"*
+
 
 ---
 
@@ -94,6 +91,9 @@ awsense/
 │   └── ingest_docs.py          # downloads AWS docs → S3
 ├── k6/                     # performance test scripts
 └── reports/                # coverage + SLA reports
+└── .github/
+    └── workflows/
+        └── deploy.yml
 ```
 
 ---
@@ -146,22 +146,6 @@ cdk synth
 cdk deploy
 ```
 
----
-
-## Environment Variables
-
-No secrets are committed to this repo. All keys are stored in AWS SSM Parameter Store or Lambda environment variables.
-
-| Variable | Description |
-|---|---|
-| `GROQ_API_KEY` | Groq API key for LLM inference |
-| `HF_API_TOKEN` | Hugging Face token for embedding API |
-| `VECTOR_STORE_PATH` | Path to FAISS index inside Lambda (`/tmp/awsense.index`) |
-| `LOG_LEVEL` | `INFO` or `DEBUG` |
-| `MAX_OUTPUT_TOKENS` | Capped at `512` |
-| `AWS_REGION` | Deployment region |
-
-Copy `.env.example` to `.env` in `backend/` for local development.
 
 ---
 
@@ -189,15 +173,41 @@ Copy `.env.example` to `.env` in `backend/` for local development.
 
 Requests exceeding 20/session/hour return `HTTP 429` with a `retry-after` header. Errors always return `{ "error", "code", "requestId" }` — never raw stack traces.
 
+
+
 ---
 
-## Architecture Decisions
+## CI/CD Pipeline
 
-**Why not Amazon Bedrock?**
-The original design used Bedrock Knowledge Base (OpenSearch Serverless + Titan Embeddings) for retrieval and Claude Haiku for inference. Persistent `429` throttling errors across all Bedrock models and regions in Week 1 made this path unreliable. An AWS support case is open. The current stack (Groq + HF Inference API + FAISS) runs at effectively zero variable cost and unblocked development. The retrieval layer is isolated so Bedrock can be reintegrated by changing one file.
+GitHub Actions automates the complete deployment workflow:
 
-**Why FAISS inside Lambda?**
-Keeps the entire retrieval pipeline within one compute unit — no external vector DB to manage or pay for. The index is built offline and loaded into `/tmp` on Lambda cold start. Tradeoff: slightly higher cold-start latency (~2s). Provisioned concurrency will be evaluated in Week 3 if needed.
+1. Build React frontend using Vite
+2. Download and clean AWS documentation pages
+3. Generate FAISS vector store automatically
+4. Run backend integration tests
+5. Package Lambda dependencies into `python_packages`
+6. Deploy infrastructure using AWS CDK
+7. Upload frontend to S3 + CloudFront
+
+The vector store is generated dynamically during CI/CD and bundled into the Lambda deployment package automatically.
+
+### Environment Variables
+
+No secrets are committed to this repo. Production secrets are managed through GitHub Actions secrets and Lambda environment variables.
+
+| Variable              | Description                                 |
+| --------------------- | ------------------------------------------- |
+| `GROQ_API_KEY`        | Groq API key for LLM inference              |
+| `HF_TOKEN`            | Hugging Face token for embedding API        |
+| `API_KEY`             | API authentication key for `/chat` endpoint |
+| `VITE_API_BASE_URL`   | Frontend API Gateway base URL               |
+| `VITE_API_KEY`        | Frontend API access key                     |
+| `AWS_REGION`          | Deployment region                           |
+| `CDK_DEFAULT_ACCOUNT` | AWS account for CDK deployment              |
+| `CDK_DEFAULT_REGION`  | AWS region for CDK deployment               |
+
+
+
 
 ---
 
@@ -210,15 +220,30 @@ Keeps the entire retrieval pipeline within one compute unit — no external vect
 
 ---
 
+
+
+## Architecture Decisions
+
+**Why not Amazon Bedrock?**
+The original design used Bedrock Knowledge Base (OpenSearch Serverless + Titan Embeddings) for retrieval and Claude Haiku for inference. Persistent `429` throttling errors across all Bedrock models and regions in Week 1 made this path unreliable. An AWS support case is open. The current stack (Groq + HF Inference API + FAISS) runs at effectively zero variable cost and unblocked development. The retrieval layer is isolated so Bedrock can be reintegrated by changing one file.
+
+
+**Why FAISS inside Lambda?**
+
+Keeps the entire retrieval pipeline within one compute unit — no external vector DB to manage or pay for. The index is built offline and loaded into `/tmp` on Lambda cold start. Tradeoff: slightly higher cold-start latency (~2s). Provisioned concurrency will be evaluated in Week 3 if needed.
+
+---
+
+
+
 ## Build Progress
 
-| Week | Goal | Status |
-|---|---|---|
-| 1 — Foundation | Backend, RAG pipeline, unit tests | ✅ Complete |
-| 2 — Frontend + CI/CD | UI deployed, GitHub Actions | 🔄 In progress |
-| 3 — Throttling + Observability | DynamoDB throttle, CloudWatch dashboard, integration tests | ⏳ Planned |
-| 4 — Testing + Docs | k6 performance tests, SLA report, architecture diagram | ⏳ Planned |
-
+| Week                           | Goal                                                                       | Status     |
+| ------------------------------ | -------------------------------------------------------------------------- | ---------- |
+| 1 — Foundation                 | Backend, RAG pipeline, unit tests                                          | ✅ Complete |
+| 2 — Frontend + CI/CD           | Frontend deployment, GitHub Actions automation, vector generation pipeline | ✅ Complete |
+| 3 — Throttling + Observability | DynamoDB throttle, CloudWatch dashboard, Bedrock migration experiments     | ⏳ Planned  |
+| 4 — Testing + Docs             | k6 performance tests, SLA report, architecture diagrams                    | ⏳ Planned  |
 ---
 
 ## License
