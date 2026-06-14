@@ -4,18 +4,17 @@ from pathlib import Path
 import requests
 import json
 
-
-
 # -------------------------
 # PATHS
 # -------------------------
 
-URL_FILE = Path("../aws_docs_saves/aws_doc_urls.txt")
+BASE_DIR = Path(__file__).resolve().parents[1]
+URL_FILE = BASE_DIR / "aws_docs_saves/aws_doc_urls.txt"
 
-RAW_DIR = Path("../aws_docs_saves/raw")
-CLEAN_DIR = Path("../aws_docs_saves/clean")
+RAW_DIR = BASE_DIR / "aws_docs_saves/raw"
+CLEAN_DIR = BASE_DIR / "aws_docs_saves/clean"
 
-METADATA_FILE = Path("../aws_docs_saves/metadata.json")
+METADATA_FILE = BASE_DIR / "aws_docs_saves/metadata.json"
 
 RAW_DIR.mkdir(parents=True, exist_ok=True)
 CLEAN_DIR.mkdir(parents=True, exist_ok=True)
@@ -35,6 +34,7 @@ print(f"Found {len(urls)} URLs")
 # HELPERS
 # -------------------------
 
+
 def generate_filename(url: str) -> str:
     path_parts = [p for p in urlparse(url).path.split("/") if p]
 
@@ -51,14 +51,7 @@ def clean_html(html_text: str) -> tuple[str, str]:
     soup = BeautifulSoup(html_text, "html.parser")
 
     # Remove junk tags
-    for tag in soup([
-        "script",
-        "style",
-        "nav",
-        "footer",
-        "header",
-        "aside"
-    ]):
+    for tag in soup(["script", "style", "nav", "footer", "header", "aside"]):
         tag.decompose()
 
     # Extract title
@@ -69,9 +62,7 @@ def clean_html(html_text: str) -> tuple[str, str]:
 
     lines = [line.strip() for line in text.splitlines()]
 
-    clean_text = "\n".join(
-        line for line in lines if line
-    )
+    clean_text = "\n".join(line for line in lines if line)
 
     return clean_text, title
 
@@ -125,10 +116,7 @@ for i, url in enumerate(urls, start=1):
         # STORE METADATA
         # -------------------------
 
-        metadata[txt_filename] = {
-            "title": title,
-            "url": url
-        }
+        metadata[txt_filename] = {"title": title, "url": url}
 
         print(f"Saved: {txt_filename}")
 

@@ -5,17 +5,16 @@ import pickle
 import json
 from pathlib import Path
 
-
-
 # -------------------------
 # PATHS
 # -------------------------
 
-DOCS_DIR = Path("../aws_docs_saves/clean")
+BASE_DIR = Path(__file__).resolve().parents[1]
+DOCS_DIR = BASE_DIR / "aws_docs_saves/clean"
 
-METADATA_FILE = Path("../aws_docs_saves/metadata.json")
+METADATA_FILE = BASE_DIR / "aws_docs_saves/metadata.json"
 
-VECTOR_STORE_DIR = Path("../vector_store")
+VECTOR_STORE_DIR = BASE_DIR / "backend" / "vector_store"
 
 
 # -------------------------
@@ -50,21 +49,20 @@ for file in DOCS_DIR.glob("*.txt"):
     text = file.read_text(encoding="utf-8")
 
     # Simple chunking
-    chunks = [
-        text[i:i + 500]
-        for i in range(0, len(text), 500)
-    ]
+    chunks = [text[i : i + 500] for i in range(0, len(text), 500)]
 
     for chunk in chunks:
 
         documents.append(chunk)
 
         # Store rich metadata
-        sources.append({
-            "file": file.name,
-            "title": metadata[file.name]["title"],
-            "url": metadata[file.name]["url"]
-        })
+        sources.append(
+            {
+                "file": file.name,
+                "title": metadata[file.name]["title"],
+                "url": metadata[file.name]["url"],
+            }
+        )
 
 
 print(f"Chunks created: {len(documents)}")
@@ -74,10 +72,7 @@ print(f"Chunks created: {len(documents)}")
 # CREATE EMBEDDINGS
 # -------------------------
 
-embeddings = model.encode(
-    documents,
-    convert_to_numpy=True
-).astype(np.float32)
+embeddings = model.encode(documents, convert_to_numpy=True).astype(np.float32)
 
 
 # -------------------------
@@ -97,10 +92,7 @@ index.add(embeddings)
 
 VECTOR_STORE_DIR.mkdir(exist_ok=True)
 
-faiss.write_index(
-    index,
-    str(VECTOR_STORE_DIR / "awsense.index")
-)
+faiss.write_index(index, str(VECTOR_STORE_DIR / "awsense.index"))
 
 
 # -------------------------
@@ -109,10 +101,7 @@ faiss.write_index(
 
 with open(VECTOR_STORE_DIR / "documents.pkl", "wb") as f:
 
-    pickle.dump({
-        "documents": documents,
-        "sources": sources
-    }, f)
+    pickle.dump({"documents": documents, "sources": sources}, f)
 
 
 print("Vector DB created successfully")
