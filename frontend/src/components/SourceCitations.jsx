@@ -28,14 +28,16 @@ export function SourceCitations({ sources }) {
               <ItemMedia>
                 <Link2 className="size-4" />
               </ItemMedia>
-
-              <ItemContent>
-                <ItemTitle className="truncate font-medium text-xs">
-                  {source}
+              <ItemContent className="min-w-0 flex-1">
+                <ItemTitle className="font-medium text-xs">
+                  <p className="text-xs text-dg-textPrimary break-all">
+                    {source}
+                  </p>
                 </ItemTitle>
               </ItemContent>
 
-              <ItemActions>
+
+              <ItemActions className="shrink-0">
                 <ExternalLink className="size-4" />
               </ItemActions>
             </a>

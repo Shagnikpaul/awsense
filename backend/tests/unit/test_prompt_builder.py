@@ -1,16 +1,6 @@
 from src.prompt_builder import PromptBuilder
 
 
-def test_prompt_contains_system_prompt():
-    builder = PromptBuilder()
-
-    docs = []
-
-    prompt = builder.build("What is S3?", docs)
-
-    assert "You are AWSense" in prompt
-
-
 def test_prompt_contains_query():
     builder = PromptBuilder()
 
@@ -69,3 +59,19 @@ def test_prompt_formats_chunks_correctly():
     prompt = builder.build("Explain Lambda", docs)
 
     assert "[Chunk 1 | Source: lambda.txt]" in prompt
+
+
+def test_prompt_contains_context_section():
+    builder = PromptBuilder()
+
+    prompt = builder.build("What is EC2?", [])
+
+    assert "CONTEXT:" in prompt
+
+
+def test_prompt_contains_user_question_section():
+    builder = PromptBuilder()
+
+    prompt = builder.build("What is EC2?", [])
+
+    assert "USER QUESTION:" in prompt

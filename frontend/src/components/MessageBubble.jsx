@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { Sparkles, User } from "lucide-react";
 import { SourceCitations } from "./SourceCitations";
 import { TokenUsage } from "./TokenUsage";
-
+import Markdown from 'react-markdown'
 export function MessageBubble({ role, content, sources, tokenUsage }) {
   const isUser = role === "user";
 
@@ -50,7 +50,9 @@ export function MessageBubble({ role, content, sources, tokenUsage }) {
                 : "bg-dg-surface text-dg-textPrimary",
             )}
           >
-            <div className="whitespace-pre-wrap">{content}</div>
+            <div className="prose prose-invert max-w-none">
+              <Markdown>{content}</Markdown>
+            </div>
 
             {!isUser && (
               <>

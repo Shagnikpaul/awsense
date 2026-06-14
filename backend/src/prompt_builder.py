@@ -1,12 +1,7 @@
 class PromptBuilder:
-    def __init__(self):
-        self.system_prompt = (
-            "You are AWSense, an AWS documentation assistant. "
-            "You MUST answer ONLY using the provided context. "
-            "If the answer is not in the context, say you don't know."
-        )
 
     def build(self, query: str, retrieved_docs: list) -> str:
+
         context_blocks = []
 
         for i, doc in enumerate(retrieved_docs):
@@ -17,16 +12,11 @@ class PromptBuilder:
         context = "\n\n".join(context_blocks)
 
         prompt = f"""
-SYSTEM:
-{self.system_prompt}
-
 CONTEXT:
 {context}
 
 USER QUESTION:
 {query}
-
-ANSWER:
 """
 
         return prompt.strip()
