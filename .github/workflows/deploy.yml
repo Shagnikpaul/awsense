@@ -55,6 +55,12 @@ jobs:
         run: |
           python scripts/build_vector_store.py
 
+      # in case build_vector_store.py fails to save the index, this will help debug
+      - name: Verify vector store exists
+        run: |
+          ls -R backend/vector_store
+          test -f backend/vector_store/awsense.index
+
       # -------------------------
       # BACKEND PACKAGE
       # -------------------------
