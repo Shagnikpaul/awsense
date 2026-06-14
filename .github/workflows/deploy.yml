@@ -65,16 +65,15 @@ jobs:
       # BACKEND PACKAGE
       # -------------------------
 
-      - name: Create Lambda package
-        working-directory: backend
-        run: |
-          zip -r lambda.zip src/ requirements.txt vector_store/
+      # we only need the vector_store folder in future and the remaining code already
+      # exists in the repo also infra_stack is going to package the contents of backend folder it does not need a separate zip package for the backend code.
 
-      - name: Upload Lambda artifact
+      # VECTOR STORE ARTIFACT
+      - name: Upload vector store artifact
         uses: actions/upload-artifact@v7
         with:
-          name: lambda-package
-          path: backend/lambda.zip
+          name: vector-store
+          path: backend/vector_store/
 
   integration-test:
     needs: [build]
