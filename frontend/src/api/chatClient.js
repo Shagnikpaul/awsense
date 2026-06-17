@@ -40,6 +40,8 @@ export const sendMessage = async ({ message, sessionId, topicFilter }) => {
     },
     body: JSON.stringify({
       message,
+      sessionId,
+      topicFilter,
     }),
   });
 

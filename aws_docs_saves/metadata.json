@@ -1,122 +1,302 @@
 {
     "AWSEC2_latest_UserGuide_concepts.txt": {
         "title": "What is Amazon EC2? - Amazon Elastic Compute Cloud",
-        "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/concepts.html"
+        "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/concepts.html",
+        "topic": "EC2"
     },
     "AWSEC2_latest_UserGuide_Instances.txt": {
         "title": "Amazon EC2 instances - Amazon Elastic Compute Cloud",
-        "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Instances.html"
+        "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Instances.html",
+        "topic": "EC2"
     },
-    "AWSEC2_latest_UserGuide_ec2-security-groups.txt": {
-        "title": "Amazon EC2 security groups for your EC2 instances - Amazon Elastic Compute Cloud",
-        "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-security-groups.html"
+    "AWSEC2_latest_UserGuide_EC2_GetStarted.txt": {
+        "title": "Get started with Amazon EC2 - Amazon Elastic Compute Cloud",
+        "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html",
+        "topic": "EC2"
+    },
+    "AWSEC2_latest_UserGuide_iam-roles-for-amazon-ec2.txt": {
+        "title": "IAM roles for Amazon EC2 - Amazon Elastic Compute Cloud",
+        "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html",
+        "topic": "EC2"
+    },
+    "ec2.txt": {
+        "title": "Untitled",
+        "url": "https://docs.aws.amazon.com/ec2/",
+        "topic": "EC2"
     },
     "AmazonS3_latest_userguide_Welcome.txt": {
         "title": "What is Amazon S3? - Amazon Simple Storage Service",
-        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html"
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html",
+        "topic": "S3"
     },
-    "AmazonS3_latest_userguide_bucketnamingrules.txt": {
-        "title": "General purpose bucket naming rules - Amazon Simple Storage Service",
-        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucketnamingrules.html"
+    "AmazonS3_latest_userguide_Versioning.txt": {
+        "title": "Retaining multiple versions of objects with S3 Versioning - Amazon Simple Storage Service",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/Versioning.html",
+        "topic": "S3"
     },
-    "AmazonS3_latest_userguide_security-best-practices.txt": {
-        "title": "Security best practices for Amazon S3 - Amazon Simple Storage Service",
-        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/security-best-practices.html"
+    "AmazonS3_latest_userguide_object-lifecycle-mgmt.txt": {
+        "title": "Managing the lifecycle of objects - Amazon Simple Storage Service",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lifecycle-mgmt.html",
+        "topic": "S3"
     },
-    "IAM_latest_UserGuide_introduction.txt": {
-        "title": "What is IAM? - AWS Identity and Access Management",
-        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html"
+    "AmazonS3_latest_userguide_lifecycle-transition-general-considerations.txt": {
+        "title": "Transitioning objects using Amazon S3 Lifecycle - Amazon Simple Storage Service",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/lifecycle-transition-general-considerations.html",
+        "topic": "S3"
     },
-    "IAM_latest_UserGuide_access_policies.txt": {
-        "title": "Policies and permissions in AWS Identity and Access Management - AWS Identity and Access Management",
-        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html"
+    "AmazonS3_latest_userguide_access-policy-language-overview.txt": {
+        "title": "Policies and permissions in Amazon S3 - Amazon Simple Storage Service",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-policy-language-overview.html",
+        "topic": "S3"
     },
-    "IAM_latest_UserGuide_best-practices.txt": {
-        "title": "Security best practices in IAM - AWS Identity and Access Management",
-        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html"
+    "AmazonS3_latest_userguide_security-iam.txt": {
+        "title": "Identity and Access Management for Amazon S3 - Amazon Simple Storage Service",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/security-iam.html",
+        "topic": "S3"
     },
-    "lambda_latest_dg_welcome.txt": {
-        "title": "What is AWS Lambda? - AWS Lambda",
-        "url": "https://docs.aws.amazon.com/lambda/latest/dg/welcome.html"
-    },
-    "lambda_latest_dg_lambda-runtime-environment.txt": {
-        "title": "Understanding the Lambda execution environment lifecycle - AWS Lambda",
-        "url": "https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtime-environment.html"
-    },
-    "lambda_latest_dg_configuration-memory.txt": {
-        "title": "Configure Lambda function memory - AWS Lambda",
-        "url": "https://docs.aws.amazon.com/lambda/latest/dg/configuration-memory.html"
+    "AmazonS3_latest_userguide_security_iam_service-with-iam.txt": {
+        "title": "How Amazon S3 works with IAM - Amazon Simple Storage Service",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/security_iam_service-with-iam.html",
+        "topic": "S3"
     },
     "vpc_latest_userguide_what-is-amazon-vpc.txt": {
         "title": "What is Amazon VPC? - Amazon Virtual Private Cloud",
-        "url": "https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-vpc.html"
+        "url": "https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-vpc.html",
+        "topic": "VPC"
     },
-    "vpc_latest_userguide_VPC_Subnets.txt": {
-        "title": "How Amazon VPC works - Amazon Virtual Private Cloud",
-        "url": "https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Subnets.html"
+    "vpc_latest_userguide_vpc-example-private-subnets-nat.txt": {
+        "title": "Example: VPC with servers in private subnets and NAT - Amazon Virtual Private Cloud",
+        "url": "https://docs.aws.amazon.com/vpc/latest/userguide/vpc-example-private-subnets-nat.html",
+        "topic": "VPC"
     },
-    "vpc_latest_userguide_vpc-security-groups.txt": {
-        "title": "Control traffic to your AWS resources using security groups - Amazon Virtual Private Cloud",
-        "url": "https://docs.aws.amazon.com/vpc/latest/userguide/vpc-security-groups.html"
+    "vpc_latest_userguide_vpc-example-dev-test.txt": {
+        "title": "Example: VPC for a test environment - Amazon Virtual Private Cloud",
+        "url": "https://docs.aws.amazon.com/vpc/latest/userguide/vpc-example-dev-test.html",
+        "topic": "VPC"
     },
-    "AmazonRDS_latest_UserGuide_Welcome.txt": {
-        "title": "What is Amazon Relational Database Service (Amazon RDS)? - Amazon Relational Database Service",
-        "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Welcome.html"
+    "vpc_latest_userguide_work-with-nat-instances.txt": {
+        "title": "Enable private resources to communicate outside the VPC - Amazon Virtual Private Cloud",
+        "url": "https://docs.aws.amazon.com/vpc/latest/userguide/work-with-nat-instances.html",
+        "topic": "VPC"
     },
-    "AmazonRDS_latest_UserGuide_CHAP_BestPractices.txt": {
-        "title": "Best practices for Amazon RDS - Amazon Relational Database Service",
-        "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_BestPractices.html"
+    "vpc_latest_privatelink_gateway-endpoints.txt": {
+        "title": "Gateway endpoints - Amazon Virtual Private Cloud",
+        "url": "https://docs.aws.amazon.com/vpc/latest/privatelink/gateway-endpoints.html",
+        "topic": "VPC"
     },
-    "AmazonRDS_latest_UserGuide_USER_CreateDBInstance.txt": {
-        "title": "Creating an Amazon RDS DB instance - Amazon Relational Database Service",
-        "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_CreateDBInstance.html"
+    "iam.txt": {
+        "title": "Untitled",
+        "url": "https://docs.aws.amazon.com/iam/",
+        "topic": "IAM"
+    },
+    "IAM_latest_UserGuide_intro-structure.txt": {
+        "title": "How IAM works - AWS Identity and Access Management",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/intro-structure.html",
+        "topic": "IAM"
+    },
+    "IAM_latest_UserGuide_access_policies.txt": {
+        "title": "Policies and permissions in AWS Identity and Access Management - AWS Identity and Access Management",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html",
+        "topic": "IAM"
+    },
+    "IAM_latest_UserGuide_id_roles.txt": {
+        "title": "IAM roles - AWS Identity and Access Management",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html",
+        "topic": "IAM"
+    },
+    "IAM_latest_UserGuide_id_roles_manage.txt": {
+        "title": "IAM role management - AWS Identity and Access Management",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_manage.html",
+        "topic": "IAM"
+    },
+    "IAM_latest_UserGuide_id_roles_create_for-user.txt": {
+        "title": "Create a role to give permissions to an IAM user - AWS Identity and Access Management",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-user.html",
+        "topic": "IAM"
+    },
+    "IAM_latest_UserGuide_access_policies_job-functions_create-policies.txt": {
+        "title": "Creating roles and attaching policies (console) - AWS Identity and Access Management",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_job-functions_create-policies.html",
+        "topic": "IAM"
+    },
+    "IAM_latest_UserGuide_reference_policies_condition-keys.txt": {
+        "title": "AWS global condition context keys - AWS Identity and Access Management",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_condition-keys.html",
+        "topic": "IAM"
+    },
+    "lambda_latest_dg_welcome.txt": {
+        "title": "What is AWS Lambda? - AWS Lambda",
+        "url": "https://docs.aws.amazon.com/lambda/latest/dg/welcome.html",
+        "topic": "Lambda"
+    },
+    "lambda_latest_dg_getting-started.txt": {
+        "title": "Create your first Lambda function - AWS Lambda",
+        "url": "https://docs.aws.amazon.com/lambda/latest/dg/getting-started.html",
+        "topic": "Lambda"
+    },
+    "lambda_latest_dg_lambda-functions.txt": {
+        "title": "Configuring AWS Lambda functions - AWS Lambda",
+        "url": "https://docs.aws.amazon.com/lambda/latest/dg/lambda-functions.html",
+        "topic": "Lambda"
+    },
+    "lambda_latest_dg_chapter-layers.txt": {
+        "title": "Managing Lambda dependencies with layers - AWS Lambda",
+        "url": "https://docs.aws.amazon.com/lambda/latest/dg/chapter-layers.html",
+        "topic": "Lambda"
+    },
+    "lambda_latest_dg_adding-layers.txt": {
+        "title": "Adding layers to functions - AWS Lambda",
+        "url": "https://docs.aws.amazon.com/lambda/latest/dg/adding-layers.html",
+        "topic": "Lambda"
+    },
+    "lambda.txt": {
+        "title": "Untitled",
+        "url": "https://docs.aws.amazon.com/lambda/",
+        "topic": "Lambda"
+    },
+    "AmazonRDS_latest_gettingstartedguide_advanced-security.txt": {
+        "title": "Advanced security options in Amazon RDS - Amazon Relational Database Service",
+        "url": "https://docs.aws.amazon.com/AmazonRDS/latest/gettingstartedguide/advanced-security.html",
+        "topic": "RDS"
+    },
+    "AmazonRDS_latest_gettingstartedguide_managing-backup-restore.txt": {
+        "title": "Backing up and restoring your Amazon RDS DB instance - Amazon Relational Database Service",
+        "url": "https://docs.aws.amazon.com/AmazonRDS/latest/gettingstartedguide/managing-backup-restore.html",
+        "topic": "RDS"
+    },
+    "AmazonRDS_latest_UserGuide_multi-az-db-clusters-concepts.txt": {
+        "title": "Multi-AZ DB cluster deployments for Amazon RDS - Amazon Relational Database Service",
+        "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/multi-az-db-clusters-concepts.html",
+        "topic": "RDS"
+    },
+    "AmazonRDS_latest_UserGuide_USER_ReadRepl.txt": {
+        "title": "Working with DB instance read replicas - Amazon Relational Database Service",
+        "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_ReadRepl.html",
+        "topic": "RDS"
+    },
+    "AmazonRDS_latest_UserGuide_monitoring-cloudwatch.txt": {
+        "title": "Monitoring Amazon RDS metrics with Amazon CloudWatch - Amazon Relational Database Service",
+        "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/monitoring-cloudwatch.html",
+        "topic": "RDS"
+    },
+    "AmazonRDS_latest_UserGuide_rds-lambda-tutorial.txt": {
+        "title": "Tutorial: Using a Lambda function to access an Amazon RDS database - Amazon Relational Database Service",
+        "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/rds-lambda-tutorial.html",
+        "topic": "RDS"
     },
     "AmazonCloudFront_latest_DeveloperGuide_Introduction.txt": {
         "title": "What is Amazon CloudFront? - Amazon CloudFront",
-        "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html"
+        "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html",
+        "topic": "CloudFront"
+    },
+    "AmazonCloudFront_latest_DeveloperGuide_distribution-web-values-specify.txt": {
+        "title": "All distribution settings reference - Amazon CloudFront",
+        "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-web-values-specify.html",
+        "topic": "CloudFront"
+    },
+    "AmazonCloudFront_latest_DeveloperGuide_DownloadDistValuesOrigin.txt": {
+        "title": "Origin settings - Amazon CloudFront",
+        "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/DownloadDistValuesOrigin.html",
+        "topic": "CloudFront"
     },
     "AmazonCloudFront_latest_DeveloperGuide_DownloadDistValuesCacheBehavior.txt": {
         "title": "Cache behavior settings - Amazon CloudFront",
-        "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/DownloadDistValuesCacheBehavior.html"
+        "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/DownloadDistValuesCacheBehavior.html",
+        "topic": "CloudFront"
     },
-    "AmazonCloudFront_latest_DeveloperGuide_private-content-restricting-access-to-s3.txt": {
-        "title": "Restrict access to an Amazon S3 origin - Amazon CloudFront",
-        "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-s3.html"
+    "AmazonCloudFront_latest_DeveloperGuide_DownloadDistS3AndCustomOrigins.txt": {
+        "title": "Use various origins with CloudFront distributions - Amazon CloudFront",
+        "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/DownloadDistS3AndCustomOrigins.html",
+        "topic": "CloudFront"
     },
     "Route53_latest_DeveloperGuide_Welcome.txt": {
         "title": "What is Amazon Route\u00c2\u00a053? - Amazon Route 53",
-        "url": "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/Welcome.html"
+        "url": "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/Welcome.html",
+        "topic": "Route53"
     },
-    "Route53_latest_DeveloperGuide_routing-policy.txt": {
-        "title": "Choosing a routing policy - Amazon Route 53",
-        "url": "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy.html"
+    "Route53_latest_DeveloperGuide_route-53-concepts.txt": {
+        "title": "Amazon Route\u00c2\u00a053 concepts - Amazon Route 53",
+        "url": "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/route-53-concepts.html",
+        "topic": "Route53"
     },
-    "Route53_latest_DeveloperGuide_hosted-zones-working-with.txt": {
-        "title": "Working with hosted zones - Amazon Route 53",
-        "url": "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/hosted-zones-working-with.html"
+    "Route53_latest_DeveloperGuide_monitoring-cloudwatch.txt": {
+        "title": "Monitoring your resources with Amazon Route\u00c2\u00a053 health checks and Amazon CloudWatch - Amazon Route 53",
+        "url": "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/monitoring-cloudwatch.html",
+        "topic": "Route53"
     },
-    "elasticloadbalancing_latest_userguide_what-is-load-balancing.txt": {
-        "title": "What is Elastic Load Balancing? - Elastic Load Balancing",
-        "url": "https://docs.aws.amazon.com/elasticloadbalancing/latest/userguide/what-is-load-balancing.html"
+    "Route53_latest_DeveloperGuide_routing-policy-latency-phz.txt": {
+        "title": "Latency-based routing in private hosted zones - Amazon Route 53",
+        "url": "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy-latency-phz.html",
+        "topic": "Route53"
     },
-    "elasticloadbalancing_latest_application_introduction.txt": {
-        "title": "What is an Application Load Balancer? - Elastic Load Balancing",
-        "url": "https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html"
+    "Route53_latest_DeveloperGuide_routing-to-cloudfront-distribution.txt": {
+        "title": "Routing traffic to an Amazon CloudFront distribution by using your domain name - Amazon Route 53",
+        "url": "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-to-cloudfront-distribution.html",
+        "topic": "Route53"
+    },
+    "Route53_latest_DeveloperGuide_security-iam-awsmanpol-route53.txt": {
+        "title": "AWS managed policies for Amazon Route\u00c2\u00a053 - Amazon Route 53",
+        "url": "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/security-iam-awsmanpol-route53.html",
+        "topic": "Route53"
+    },
+    "elasticloadbalancing_latest_userguide_how-elastic-load-balancing-works.txt": {
+        "title": "How Elastic Load Balancing works - Elastic Load Balancing",
+        "url": "https://docs.aws.amazon.com/elasticloadbalancing/latest/userguide/how-elastic-load-balancing-works.html",
+        "topic": "ELB"
     },
     "elasticloadbalancing_latest_network_introduction.txt": {
         "title": "What is a Network Load Balancer? - Elastic Load Balancing",
-        "url": "https://docs.aws.amazon.com/elasticloadbalancing/latest/network/introduction.html"
+        "url": "https://docs.aws.amazon.com/elasticloadbalancing/latest/network/introduction.html",
+        "topic": "ELB"
+    },
+    "elasticloadbalancing_latest_application_introduction.txt": {
+        "title": "What is an Application Load Balancer? - Elastic Load Balancing",
+        "url": "https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html",
+        "topic": "ELB"
+    },
+    "elasticloadbalancing_latest_application_load-balancer-listeners.txt": {
+        "title": "Listeners for your Application Load Balancers - Elastic Load Balancing",
+        "url": "https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-listeners.html",
+        "topic": "ELB"
+    },
+    "elasticloadbalancing_latest_application_load-balancer-target-groups.txt": {
+        "title": "Target groups for your Application Load Balancers - Elastic Load Balancing",
+        "url": "https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-target-groups.html",
+        "topic": "ELB"
+    },
+    "elasticloadbalancing_latest_network_load-balancer-listeners.txt": {
+        "title": "Listeners for your Network Load Balancers - Elastic Load Balancing",
+        "url": "https://docs.aws.amazon.com/elasticloadbalancing/latest/network/load-balancer-listeners.html",
+        "topic": "ELB"
+    },
+    "elasticloadbalancing_latest_network_load-balancer-target-groups.txt": {
+        "title": "Target groups for your Network Load Balancers - Elastic Load Balancing",
+        "url": "https://docs.aws.amazon.com/elasticloadbalancing/latest/network/load-balancer-target-groups.html",
+        "topic": "ELB"
+    },
+    "elasticloadbalancing_latest_network_application-load-balancer-target.txt": {
+        "title": "Use an Application Load Balancer as a target of a Network Load Balancer - Elastic Load Balancing",
+        "url": "https://docs.aws.amazon.com/elasticloadbalancing/latest/network/application-load-balancer-target.html",
+        "topic": "ELB"
     },
     "AmazonCloudWatch_latest_monitoring_WhatIsCloudWatch.txt": {
         "title": "What is Amazon CloudWatch? - Amazon CloudWatch",
-        "url": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/WhatIsCloudWatch.html"
+        "url": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/WhatIsCloudWatch.html",
+        "topic": "CloudWatch"
     },
-    "AmazonCloudWatch_latest_monitoring_AlarmThatSendsEmail.txt": {
-        "title": "Using Amazon CloudWatch alarms - Amazon CloudWatch",
-        "url": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html"
+    "AmazonCloudWatch_latest_monitoring_cloudwatch_concepts.txt": {
+        "title": "Metrics concepts - Amazon CloudWatch",
+        "url": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_concepts.html",
+        "topic": "CloudWatch"
     },
-    "AmazonCloudWatch_latest_logs_WhatIsCloudWatchLogs.txt": {
-        "title": "What is Amazon CloudWatch Logs? - Amazon CloudWatch Logs",
-        "url": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/WhatIsCloudWatchLogs.html"
+    "AmazonCloudWatch_latest_monitoring_working_with_metrics.txt": {
+        "title": "Metrics in Amazon CloudWatch - Amazon CloudWatch",
+        "url": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/working_with_metrics.html",
+        "topic": "CloudWatch"
+    },
+    "AmazonCloudWatch_latest_monitoring_CloudWatch_Dashboards.txt": {
+        "title": "Using Amazon CloudWatch dashboards - Amazon CloudWatch",
+        "url": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Dashboards.html",
+        "topic": "CloudWatch"
     }
 }

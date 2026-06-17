@@ -13,6 +13,12 @@ from src.prompt_builder import PromptBuilder  # noqa: E402
 from src.retriever import Retriever  # noqa: E402
 from src.response_formatter import format_response  # noqa: E402
 from src.validator import validate_message  # noqa: E402
+from src.throttle import (  # noqa: E402
+    load_session,
+    check_request_limit,
+    record_request,
+    record_tokens,
+)  # noqa: E402
 
 # CORS headers
 headers = {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"}
@@ -74,6 +80,15 @@ def lambda_handler(event, context):
             }
 
     message = body.get("message", "")
+    session_id = body.get("sessionId")
+    topic_filter = body.get("topicFilter")
+
+    if not session_id:
+        return {
+            "statusCode": 400,
+            "headers": headers,
+            "body": json.dumps({"error": "sessionId is required"}),
+        }
 
     # -------------------------
     # VALIDATION
@@ -87,13 +102,32 @@ def lambda_handler(event, context):
             "body": json.dumps({"error": error}),
         }
 
+    session = load_session(session_id)
+    allowed, retry_after = check_request_limit(session)
+
+    if not allowed:
+        return {
+            "statusCode": 429,
+            "headers": {
+                **headers,
+                "Retry-After": str(retry_after),
+            },
+            "body": json.dumps(
+                {
+                    "error": "Rate limit exceeded",
+                    "code": "RATE_LIMITED",
+                    "requestId": context.aws_request_id,
+                }
+            ),
+        }
+
     # -------------------------
     # RAG PIPELINE
     # -------------------------
     retriever = Retriever()
     builder = PromptBuilder()
 
-    docs = retriever.search(message)
+    docs = retriever.search(message, topic_filter=topic_filter)
     prompt = builder.build(message, docs)
 
     answer, usage = generate_answer(prompt)
@@ -110,4 +144,6 @@ def lambda_handler(event, context):
     # -------------------------
     # SUCCESS RESPONSE
     # -------------------------
+    record_request(session)
+    record_tokens(session, usage["outputTokens"])
     return {"statusCode": 200, "headers": headers, "body": json.dumps(response)}

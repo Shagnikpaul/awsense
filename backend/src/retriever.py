@@ -38,15 +38,38 @@ class Retriever:
 
         return np.array(embedding, dtype=np.float32)
 
-    def search(self, query: str, k: int = 3):
+    def search(self, query: str, k: int = 3, topic_filter: str = None):
+        if topic_filter and topic_filter != "All":
+            query = f"AWS Service: {topic_filter}\nUser Question: {query}"
+
         query_vec = self.get_embedding(query)
 
-        distances, indices = self.index.search(query_vec, k)
+        distances, indices = self.index.search(query_vec, k * 10)
 
         results = []
 
         for i in indices[0]:
-            if i < len(self.documents):
-                results.append({"text": self.documents[i], "source": self.sources[i]})
+
+            if i >= len(self.documents):
+                continue
+
+            source = self.sources[i]
+
+            if topic_filter and topic_filter != "All":
+                if source.get("topic") != topic_filter:
+                    continue
+
+            results.append({"text": self.documents[i], "source": source})
+
+            if len(results) == k:
+                break
+
+        # fallback (IMPORTANT)
+        if not results:
+            for i in indices[0][:k]:
+                if i < len(self.documents):
+                    results.append(
+                        {"text": self.documents[i], "source": self.sources[i]}
+                    )
 
         return results

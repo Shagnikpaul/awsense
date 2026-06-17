@@ -11,7 +11,7 @@ from constructs import Construct
 from aws_cdk import aws_s3_deployment as s3deploy
 from aws_cdk import aws_cloudfront as cloudfront
 from aws_cdk import aws_cloudfront_origins as origins
-
+from aws_cdk import aws_dynamodb as dynamodb
 
 class InfraStack(Stack):
 
@@ -37,6 +37,18 @@ class InfraStack(Stack):
             removal_policy=RemovalPolicy.DESTROY,
             auto_delete_objects=True,
             block_public_access=s3.BlockPublicAccess.BLOCK_ALL,
+        )
+
+        throttle_table = dynamodb.Table(
+            self,
+            "ThrottleTable",
+            partition_key=dynamodb.Attribute(
+                name="sessionId",
+                type=dynamodb.AttributeType.STRING,
+            ),
+            billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST,
+            time_to_live_attribute="ttl",
+            removal_policy=RemovalPolicy.DESTROY,  # dev only
         )
 
 
@@ -75,10 +87,11 @@ class InfraStack(Stack):
             environment={
                 "API_KEY": api_key,
                 "GROQ_API_KEY": groq_api_key,
-                    "HF_TOKEN": hf_token,
+                "HF_TOKEN": hf_token,
+                "THROTTLE_TABLE_NAME": throttle_table.table_name,
             },
         )
-
+        throttle_table.grant_read_write_data(chatbot_lambda)
         api = apigw.RestApi(
             self,
             "AwsenseApi",
