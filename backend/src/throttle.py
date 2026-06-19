@@ -2,9 +2,6 @@ import os
 import boto3
 import time
 
-dynamodb = boto3.resource("dynamodb")
-table = dynamodb.Table(os.environ["THROTTLE_TABLE_NAME"])
-
 # constraints
 MAX_REQUESTS_PER_HOUR = 20
 MAX_TOKENS_PER_DAY = 50_000
@@ -12,13 +9,18 @@ MAX_TOKENS_PER_DAY = 50_000
 HOUR_WINDOW_SECONDS = 3600
 DAY_WINDOW_SECONDS = 86400
 
+def get_table():
+    dynamodb = boto3.resource("dynamodb")
+    table = dynamodb.Table(os.environ["THROTTLE_TABLE_NAME"])
+    return table
+
 
 def current_timestamp() -> int:
     return int(time.time())
 
 
 def get_session_record(session_id: str) -> dict:
-    response = table.get_item(Key={"sessionId": session_id})
+    response = get_table().get_item(Key={"sessionId": session_id})
 
     return response.get("Item", {})
 
@@ -40,7 +42,7 @@ def load_session(session_id: str) -> dict:
 
 
 def save_session(session: dict) -> None:
-    table.put_item(Item=session)
+    get_table().put_item(Item=session)
 
 
 def record_tokens(session: dict, tokens: int) -> None:

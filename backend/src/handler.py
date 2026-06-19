@@ -2,6 +2,7 @@
 # they are needed to import from the
 # python_packages directory
 import sys
+import time
 import json
 import os
 from pathlib import Path
@@ -19,7 +20,8 @@ from src.throttle import (  # noqa: E402
     record_request,
     record_tokens,
 )  # noqa: E402
-
+from src.logger import log_event, log_error  # noqa: E402
+from src.metrics import publish_output_tokens  # noqa: E402
 # CORS headers
 headers = {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"}
 
@@ -27,6 +29,7 @@ API_KEY = os.getenv("API_KEY")
 
 
 def lambda_handler(event, context):
+    start_time = time.time()
     method = event.get("httpMethod")
     path = event.get("path", "")
 
@@ -78,11 +81,15 @@ def lambda_handler(event, context):
                 "headers": headers,
                 "body": json.dumps({"error": "Invalid JSON"}),
             }
-
+    # raise Exception("Alarm test")
     message = body.get("message", "")
     session_id = body.get("sessionId")
     topic_filter = body.get("topicFilter")
-
+    log_event(
+        "REQUEST_RECEIVED",
+        sessionId=session_id,
+        topicFilter=topic_filter,
+    )
     if not session_id:
         return {
             "statusCode": 400,
@@ -106,6 +113,11 @@ def lambda_handler(event, context):
     allowed, retry_after = check_request_limit(session)
 
     if not allowed:
+        log_event(
+            "RATE_LIMITED",
+            sessionId=session_id,
+            retryAfter=retry_after,
+        )
         return {
             "statusCode": 429,
             "headers": {
@@ -126,11 +138,36 @@ def lambda_handler(event, context):
     # -------------------------
     retriever = Retriever()
     builder = PromptBuilder()
-
-    docs = retriever.search(message, topic_filter=topic_filter)
-    prompt = builder.build(message, docs)
-
-    answer, usage = generate_answer(prompt)
+    try:
+        docs = retriever.search(message, topic_filter=topic_filter)
+        log_event(
+            "RETRIEVAL_COMPLETE",
+            sessionId=session_id,
+            topicFilter=topic_filter,
+            docsReturned=len(docs),
+        )
+        prompt = builder.build(message, docs)
+        answer, usage = generate_answer(prompt)
+        publish_output_tokens(
+            usage["outputTokens"]
+        )
+        
+    except Exception as e:
+        log_error(
+            error_type=type(e).__name__,
+            error_message=str(e),
+            sessionId=session_id,
+            topicFilter=topic_filter,
+        )
+        return {
+            "statusCode": 500,
+            "headers": headers,
+            "body": json.dumps(
+                {
+                    "error": "Internal server error"
+                }
+            ),
+        }
 
     response = format_response(
         answer=answer,
@@ -146,4 +183,13 @@ def lambda_handler(event, context):
     # -------------------------
     record_request(session)
     record_tokens(session, usage["outputTokens"])
+    duration_ms = int((time.time() - start_time) * 1000)
+    log_event(
+        "REQUEST_SUCCESS",
+        sessionId=session_id,
+        topicFilter=topic_filter,
+        inputTokens=usage["inputTokens"],
+        outputTokens=usage["outputTokens"],
+        durationMs=duration_ms,
+    )
     return {"statusCode": 200, "headers": headers, "body": json.dumps(response)}

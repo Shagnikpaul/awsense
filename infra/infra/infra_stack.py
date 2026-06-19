@@ -12,6 +12,11 @@ from aws_cdk import aws_s3_deployment as s3deploy
 from aws_cdk import aws_cloudfront as cloudfront
 from aws_cdk import aws_cloudfront_origins as origins
 from aws_cdk import aws_dynamodb as dynamodb
+from aws_cdk import aws_sns as sns
+from aws_cdk import aws_sns_subscriptions as subscriptions
+from aws_cdk import aws_cloudwatch as cloudwatch
+from aws_cdk import aws_cloudwatch_actions as cw_actions
+from aws_cdk import aws_iam as iam
 
 class InfraStack(Stack):
 
@@ -64,8 +69,17 @@ class InfraStack(Stack):
             ),
         )
 
-
+        alert_topic = sns.Topic(
+            self,
+            "AwsenseAlerts",
+            display_name="AWSense Alerts",
+        )
         
+        alert_topic.add_subscription(
+            subscriptions.EmailSubscription(
+                "shagnikpaul.772@gmail.com"
+            )
+        )
 
         s3deploy.BucketDeployment(
             self,
@@ -75,6 +89,8 @@ class InfraStack(Stack):
             distribution=distribution,
             distribution_paths=["/*"],
         )
+
+        
 
         chatbot_lambda = _lambda.Function(
             self,
@@ -89,8 +105,101 @@ class InfraStack(Stack):
                 "GROQ_API_KEY": groq_api_key,
                 "HF_TOKEN": hf_token,
                 "THROTTLE_TABLE_NAME": throttle_table.table_name,
+                "LOG_LEVEL": "INFO",
             },
         )
+        chatbot_lambda.add_to_role_policy(
+            iam.PolicyStatement(
+                actions=[
+                    "cloudwatch:PutMetricData"
+                ],
+                resources=["*"],
+            )
+        )
+        lambda_error_alarm = cloudwatch.Alarm(
+            self,
+            "AwsenseLambdaErrors",
+            metric=chatbot_lambda.metric_errors(),
+            threshold=1,
+            evaluation_periods=1,
+        )
+
+        lambda_error_alarm.add_alarm_action(
+            cw_actions.SnsAction(alert_topic)
+        )
+        dashboard = cloudwatch.Dashboard(
+            self,
+            "AwsenseDashboard",
+            dashboard_name="AWSenseDashboard",
+        )
+
+        # widget 1
+        dashboard.add_widgets(
+            cloudwatch.GraphWidget(
+                title="Lambda Invocations",
+                left=[
+                    chatbot_lambda.metric_invocations()
+                ],
+            )
+        )
+
+        #widget 2
+        dashboard.add_widgets(
+            cloudwatch.GraphWidget(
+                title="Lambda Errors",
+                left=[
+                    chatbot_lambda.metric_errors()
+                ],
+            )
+        )
+
+        # widget 3
+        dashboard.add_widgets(
+            cloudwatch.GraphWidget(
+                title="P50 Latency",
+                left=[
+                    chatbot_lambda.metric_duration(
+                        statistic="p50"
+                    )
+                ],
+            )
+        )
+
+        #widget 4
+        dashboard.add_widgets(
+            cloudwatch.GraphWidget(
+                title="P95 Latency",
+                left=[
+                    chatbot_lambda.metric_duration(
+                        statistic="p95"
+                    )
+                ],
+            )
+        )
+
+        # widget 5
+        dashboard.add_widgets(
+            cloudwatch.GraphWidget(
+                title="Output Tokens",
+                left=[
+                    cloudwatch.Metric(
+                        namespace="AWSense",
+                        metric_name="OutputTokens",
+                        statistic="Sum",
+                    )
+                ],
+            )
+        )
+        
+        dashboard.add_widgets(
+            cloudwatch.GraphWidget(
+                title="Throttle Table Reads",
+                left=[
+                    throttle_table.metric_consumed_read_capacity_units()
+                ],
+            )
+        )
+
         throttle_table.grant_read_write_data(chatbot_lambda)
         api = apigw.RestApi(
             self,
