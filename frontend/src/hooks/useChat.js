@@ -8,7 +8,7 @@ import { sendMessage as apiSendMessage } from "../api/chatClient";
 // If someone manually edits either value the signature check will fail and a
 // fresh UUID is generated transparently.
 // ---------------------------------------------------------------------------
-const LS_ID_KEY  = "_awsense_sid";
+const LS_ID_KEY = "_awsense_sid";
 const LS_SIG_KEY = "_awsense_sig";
 // A static per-build secret mixed with the origin so the key is not easily
 // portable across different deployments.
@@ -21,7 +21,7 @@ async function signId(id) {
     enc.encode(HMAC_SECRET),
     { name: "HMAC", hash: "SHA-256" },
     false,
-    ["sign"]
+    ["sign"],
   );
   const sig = await crypto.subtle.sign("HMAC", key, enc.encode(id));
   return Array.from(new Uint8Array(sig))
@@ -40,7 +40,7 @@ async function verifyId(id, storedSig) {
 
 /** Load (or create) a tamper-proof session UUID from localStorage. */
 async function loadOrCreateSessionId() {
-  const storedId  = localStorage.getItem(LS_ID_KEY);
+  const storedId = localStorage.getItem(LS_ID_KEY);
   const storedSig = localStorage.getItem(LS_SIG_KEY);
 
   if (storedId && storedSig && (await verifyId(storedId, storedSig))) {
@@ -53,9 +53,9 @@ async function loadOrCreateSessionId() {
 
 /** Create a new UUID, sign it, and write both values to localStorage. */
 async function persistNewSessionId() {
-  const id  = uuidv4();
+  const id = uuidv4();
   const sig = await signId(id);
-  localStorage.setItem(LS_ID_KEY,  id);
+  localStorage.setItem(LS_ID_KEY, id);
   localStorage.setItem(LS_SIG_KEY, sig);
   return id;
 }
