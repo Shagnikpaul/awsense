@@ -108,7 +108,6 @@ jobs:
     needs:
       - build
       - integration-test
-      - ci
     runs-on: ubuntu-latest
 
     env:
