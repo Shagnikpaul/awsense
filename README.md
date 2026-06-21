@@ -217,8 +217,7 @@ No secrets are committed to this repo. Production secrets are managed through Gi
 
 - Bedrock inference not yet active — pending quota resolution from AWS support
 - No persistent session history — conversation resets on page refresh
-- Topic filter currently scopes the prompt context but does not yet filter the FAISS search query
-- Frontend unit tests (Jest) not yet set up — planned for Week 3
+
 
 ---
 
