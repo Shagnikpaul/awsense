@@ -58,3 +58,6 @@ jobs:
       - name: Run pytest with coverage
         run: pytest --cov=src --cov-report=html
         working-directory: backend
+        env:
+          AWS_REGION: ap-south-1
+          AWS_DEFAULT_REGION: ap-south-1

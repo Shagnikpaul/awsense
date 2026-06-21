@@ -1,10 +1,14 @@
 import boto3
 
-cloudwatch = boto3.client("cloudwatch")
+
+
+def getCW():    
+    cloudwatch = boto3.client("cloudwatch")
+    return cloudwatch
 
 
 def publish_output_tokens(tokens: int):
-    cloudwatch.put_metric_data(
+    getCW().put_metric_data(
         Namespace="AWSense",
         MetricData=[
             {
