@@ -9,7 +9,8 @@ import json
 # -------------------------
 
 BASE_DIR = Path(__file__).resolve().parents[1]
-URL_FILE = BASE_DIR / "aws_docs_saves/aws_doc_urls.txt"
+
+URL_FILE = BASE_DIR / "aws_docs_saves/aws_doc_urls.json"
 
 RAW_DIR = BASE_DIR / "aws_docs_saves/raw"
 CLEAN_DIR = BASE_DIR / "aws_docs_saves/clean"
@@ -21,23 +22,21 @@ CLEAN_DIR.mkdir(parents=True, exist_ok=True)
 
 
 # -------------------------
-# LOAD URLS
+# LOAD GROUPED URL DATA
 # -------------------------
 
 with open(URL_FILE, "r", encoding="utf-8") as f:
-    urls = [line.strip() for line in f if line.strip()]
+    grouped_data = json.load(f)
 
-print(f"Found {len(urls)} URLs")
+print(f"Loaded {len(grouped_data)} topic groups")
 
 
 # -------------------------
 # HELPERS
 # -------------------------
 
-
 def generate_filename(url: str) -> str:
     path_parts = [p for p in urlparse(url).path.split("/") if p]
-
     filename = "_".join(path_parts)
 
     if not filename.endswith(".html"):
@@ -47,7 +46,6 @@ def generate_filename(url: str) -> str:
 
 
 def clean_html(html_text: str) -> tuple[str, str]:
-
     soup = BeautifulSoup(html_text, "html.parser")
 
     # Remove junk tags
@@ -61,7 +59,6 @@ def clean_html(html_text: str) -> tuple[str, str]:
     text = soup.get_text(separator="\n")
 
     lines = [line.strip() for line in text.splitlines()]
-
     clean_text = "\n".join(line for line in lines if line)
 
     return clean_text, title
@@ -78,51 +75,60 @@ metadata = {}
 # MAIN LOOP
 # -------------------------
 
-for i, url in enumerate(urls, start=1):
+for group in grouped_data:
 
-    try:
-        print(f"[{i}/{len(urls)}] Processing {url}")
+    topic = group["topic"]
+    urls = group["urls"]
 
-        response = requests.get(url, timeout=30)
-        response.raise_for_status()
+    print(f"\nProcessing topic: {topic} ({len(urls)} URLs)\n")
 
-        html_content = response.text
+    for i, url in enumerate(urls, start=1):
 
-        # -------------------------
-        # SAVE RAW HTML
-        # -------------------------
+        try:
+            print(f"[{i}/{len(urls)}] Fetching {url}")
 
-        html_filename = generate_filename(url)
+            response = requests.get(url, timeout=30)
+            response.raise_for_status()
 
-        raw_path = RAW_DIR / html_filename
+            html_content = response.text
 
-        with open(raw_path, "w", encoding="utf-8") as f:
-            f.write(html_content)
+            # -------------------------
+            # SAVE RAW HTML
+            # -------------------------
 
-        # -------------------------
-        # CLEAN HTML
-        # -------------------------
+            html_filename = generate_filename(url)
+            raw_path = RAW_DIR / html_filename
 
-        clean_text, title = clean_html(html_content)
+            with open(raw_path, "w", encoding="utf-8") as f:
+                f.write(html_content)
 
-        txt_filename = raw_path.stem + ".txt"
+            # -------------------------
+            # CLEAN HTML
+            # -------------------------
 
-        clean_path = CLEAN_DIR / txt_filename
+            clean_text, title = clean_html(html_content)
 
-        with open(clean_path, "w", encoding="utf-8") as f:
-            f.write(clean_text)
+            txt_filename = raw_path.stem + ".txt"
+            clean_path = CLEAN_DIR / txt_filename
 
-        # -------------------------
-        # STORE METADATA
-        # -------------------------
+            with open(clean_path, "w", encoding="utf-8") as f:
+                f.write(clean_text)
 
-        metadata[txt_filename] = {"title": title, "url": url}
+            # -------------------------
+            # STORE METADATA (TOPIC INCLUDED)
+            # -------------------------
 
-        print(f"Saved: {txt_filename}")
+            metadata[txt_filename] = {
+                "title": title,
+                "url": url,
+                "topic": topic
+            }
 
-    except Exception as e:
-        print(f"Failed: {url}")
-        print(e)
+            print(f"Saved: {txt_filename}")
+
+        except Exception as e:
+            print(f"Failed: {url}")
+            print(e)
 
 
 # -------------------------
@@ -132,5 +138,5 @@ for i, url in enumerate(urls, start=1):
 with open(METADATA_FILE, "w", encoding="utf-8") as f:
     json.dump(metadata, f, indent=4)
 
-print("Done.")
+print("\nDone.")
 print(f"Metadata saved to: {METADATA_FILE}")

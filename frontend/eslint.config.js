@@ -21,4 +21,24 @@ export default defineConfig([
       "no-unused-vars": "warn",
     },
   },
+
+  {
+    files: ["src/test/**/*.{js,jsx}"],
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+
+        describe: "readonly",
+        it: "readonly",
+        expect: "readonly",
+        vi: "readonly",
+
+        beforeEach: "readonly",
+        afterEach: "readonly",
+        beforeAll: "readonly",
+        afterAll: "readonly",
+        global: "readonly",
+      },
+    },
+  },
 ]);

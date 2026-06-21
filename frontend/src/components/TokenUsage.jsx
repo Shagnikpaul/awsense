@@ -1,3 +1,4 @@
+import React from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {

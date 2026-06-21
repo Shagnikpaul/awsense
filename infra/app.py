@@ -16,5 +16,6 @@ InfraStack(
     api_key=os.getenv("API_KEY"),
     groq_api_key=os.getenv("GROQ_API_KEY"),
     hf_token=os.getenv("HF_TOKEN")
+    
 )
 app.synth()

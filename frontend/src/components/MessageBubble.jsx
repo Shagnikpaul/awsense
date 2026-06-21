@@ -1,8 +1,10 @@
+import React from "react";
 import { cn } from "@/lib/utils";
 import { Sparkles, User } from "lucide-react";
 import { SourceCitations } from "./SourceCitations";
 import { TokenUsage } from "./TokenUsage";
-import Markdown from 'react-markdown'
+import Markdown from "react-markdown";
+
 export function MessageBubble({ role, content, sources, tokenUsage }) {
   const isUser = role === "user";
 

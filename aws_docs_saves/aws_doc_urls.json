@@ -1,0 +1,112 @@
+[
+    {
+        "topic": "EC2",
+        "urls": [
+            "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/concepts.html",
+            "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Instances.html",
+            "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html",
+            "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html",
+            "https://docs.aws.amazon.com/ec2/"
+        ]
+    },
+    {
+        "topic": "S3",
+        "urls": [
+            "https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html",
+            "https://docs.aws.amazon.com/AmazonS3/latest/userguide/Versioning.html",
+            "https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lifecycle-mgmt.html",
+            "https://docs.aws.amazon.com/AmazonS3/latest/userguide/lifecycle-transition-general-considerations.html",
+            "https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-policy-language-overview.html",
+            "https://docs.aws.amazon.com/AmazonS3/latest/userguide/security-iam.html",
+            "https://docs.aws.amazon.com/AmazonS3/latest/userguide/security_iam_service-with-iam.html"
+        ]
+    },
+    {
+        "topic": "VPC",
+        "urls": [
+            "https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-vpc.html",
+            "https://docs.aws.amazon.com/vpc/latest/userguide/vpc-example-private-subnets-nat.html",
+            "https://docs.aws.amazon.com/vpc/latest/userguide/vpc-example-dev-test.html",
+            "https://docs.aws.amazon.com/vpc/latest/userguide/work-with-nat-instances.html",
+            "https://docs.aws.amazon.com/vpc/latest/privatelink/gateway-endpoints.html"
+        ]
+    },
+    {
+        "topic": "IAM",
+        "urls": [
+            "https://docs.aws.amazon.com/iam/",
+            "https://docs.aws.amazon.com/IAM/latest/UserGuide/intro-structure.html",
+            "https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html",
+            "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html",
+            "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_manage.html",
+            "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-user.html",
+            "https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_job-functions_create-policies.html",
+            "https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_condition-keys.html"
+        ]
+    },
+    {
+        "topic": "Lambda",
+        "urls": [
+            "https://docs.aws.amazon.com/lambda/latest/dg/welcome.html",
+            "https://docs.aws.amazon.com/lambda/latest/dg/getting-started.html",
+            "https://docs.aws.amazon.com/lambda/latest/dg/lambda-functions.html",
+            "https://docs.aws.amazon.com/lambda/latest/dg/chapter-layers.html",
+            "https://docs.aws.amazon.com/lambda/latest/dg/adding-layers.html",
+            "https://docs.aws.amazon.com/lambda/"
+        ]
+    },
+    {
+        "topic": "RDS",
+        "urls": [
+            "https://docs.aws.amazon.com/AmazonRDS/latest/gettingstartedguide/advanced-security.html",
+            "https://docs.aws.amazon.com/AmazonRDS/latest/gettingstartedguide/managing-backup-restore.html",
+            "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/multi-az-db-clusters-concepts.html",
+            "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_ReadRepl.html",
+            "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/monitoring-cloudwatch.html",
+            "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/rds-lambda-tutorial.html"
+        ]
+    },
+    {
+        "topic": "CloudFront",
+        "urls": [
+            "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html",
+            "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-web-values-specify.html",
+            "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/DownloadDistValuesOrigin.html",
+            "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/DownloadDistValuesCacheBehavior.html",
+            "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/DownloadDistS3AndCustomOrigins.html"
+        ]
+    },
+    {
+        "topic": "Route53",
+        "urls": [
+            "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/Welcome.html",
+            "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/route-53-concepts.html",
+            "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/monitoring-cloudwatch.html",
+            "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy-latency-phz.html",
+            "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-to-cloudfront-distribution.html",
+            "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/security-iam-awsmanpol-route53.html"
+        ]
+    },
+    {
+        "topic": "ELB",
+        "urls": [
+            "https://docs.aws.amazon.com/elasticloadbalancing/latest/userguide/how-elastic-load-balancing-works.html",
+            "https://docs.aws.amazon.com/elasticloadbalancing/latest/network/introduction.html",
+            "https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html",
+            "https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-listeners.html",
+            "https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-target-groups.html",
+            "https://docs.aws.amazon.com/elasticloadbalancing/latest/network/load-balancer-listeners.html",
+            "https://docs.aws.amazon.com/elasticloadbalancing/latest/network/load-balancer-target-groups.html",
+            "https://docs.aws.amazon.com/elasticloadbalancing/latest/network/application-load-balancer-target.html"
+        ]
+    },
+    {
+        "topic": "CloudWatch",
+        "urls": [
+            "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/WhatIsCloudWatch.html",
+            "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_concepts.html",
+            "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/working_with_metrics.html",
+            "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Dashboards.html"
+        ]
+    }
+]

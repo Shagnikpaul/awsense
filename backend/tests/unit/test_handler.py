@@ -6,7 +6,17 @@ from src.handler import lambda_handler
 @patch("src.handler.generate_answer")
 @patch("src.handler.Retriever")
 @patch("src.handler.PromptBuilder")
+@patch("src.handler.record_tokens")
+@patch("src.handler.record_request")
+@patch("src.handler.check_request_limit")
+@patch("src.handler.load_session")
+@patch("src.handler.publish_output_tokens")
 def test_chat_success(
+    mock_publish_output_tokens,
+    mock_load_session,
+    mock_check_request_limit,
+    mock_record_request,
+    mock_record_tokens,
     mock_prompt_builder,
     mock_retriever,
     mock_generate_answer,
@@ -31,11 +41,18 @@ def test_chat_success(
         },
     )
 
+    mock_load_session.return_value = {}
+
+    mock_check_request_limit.return_value = (
+        True,
+        None,
+    )
+
     event = {
         "httpMethod": "POST",
         "path": "/chat",
         "headers": {"x-api-key": "test-api-key"},
-        "body": json.dumps({"message": "What is S3?"}),
+        "body": json.dumps({"message": "What is S3?", "sessionId": "test-session"}),
     }
 
     with patch("src.handler.API_KEY", "test-api-key"):

@@ -1,3 +1,4 @@
+import React from "react";
 import { Link2, ExternalLink } from "lucide-react";
 import {
   Item,
@@ -35,7 +36,6 @@ export function SourceCitations({ sources }) {
                   </p>
                 </ItemTitle>
               </ItemContent>
-
 
               <ItemActions className="shrink-0">
                 <ExternalLink className="size-4" />
