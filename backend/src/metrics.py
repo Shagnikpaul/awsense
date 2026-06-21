@@ -1,8 +1,7 @@
 import boto3
 
 
-
-def getCW():    
+def getCW():
     cloudwatch = boto3.client("cloudwatch")
     return cloudwatch
 
