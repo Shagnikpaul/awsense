@@ -244,7 +244,7 @@ Keeps the entire retrieval pipeline within one compute unit — no external vect
 | ------------------------------ | -------------------------------------------------------------------------- | ---------- |
 | 1 — Foundation                 | Backend, RAG pipeline, unit tests                                          | ✅ Complete |
 | 2 — Frontend + CI/CD           | Frontend deployment, GitHub Actions automation, vector generation pipeline | ✅ Complete |
-| 3 — Throttling + Observability | DynamoDB throttle, CloudWatch dashboard, Bedrock migration experiments     | ⏳ Planned  |
+| 3 — Platform Hardening         | Throttling system, observability, CI/CD multi-branch deployment, vector store refactor (JSON-driven ingestion) | ✅ Complete |
 | 4 — Testing + Docs             | k6 performance tests, SLA report, architecture diagrams                    | ⏳ Planned  |
 ---
 
