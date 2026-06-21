@@ -44,9 +44,7 @@ def test_chat_flow(
 
     mock_builder = mock_builder_cls.return_value
 
-    mock_builder.build.return_value = (
-        "mock prompt"
-    )
+    mock_builder.build.return_value = "mock prompt"
 
     mock_generate_answer.return_value = (
         "Amazon S3 is an object storage service.",
@@ -80,11 +78,6 @@ def test_chat_flow(
 
     assert response["statusCode"] == 200
 
-    body = json.loads(
-        response["body"]
-    )
+    body = json.loads(response["body"])
 
-    assert (
-        body["answer"]
-        == "Amazon S3 is an object storage service."
-    )
+    assert body["answer"] == "Amazon S3 is an object storage service."

@@ -22,6 +22,7 @@ from src.throttle import (  # noqa: E402
 )  # noqa: E402
 from src.logger import log_event, log_error  # noqa: E402
 from src.metrics import publish_output_tokens  # noqa: E402
+
 # CORS headers
 headers = {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"}
 
@@ -148,10 +149,8 @@ def lambda_handler(event, context):
         )
         prompt = builder.build(message, docs)
         answer, usage = generate_answer(prompt)
-        publish_output_tokens(
-            usage["outputTokens"]
-        )
-        
+        publish_output_tokens(usage["outputTokens"])
+
     except Exception as e:
         log_error(
             error_type=type(e).__name__,
@@ -162,11 +161,7 @@ def lambda_handler(event, context):
         return {
             "statusCode": 500,
             "headers": headers,
-            "body": json.dumps(
-                {
-                    "error": "Internal server error"
-                }
-            ),
+            "body": json.dumps({"error": "Internal server error"}),
         }
 
     response = format_response(

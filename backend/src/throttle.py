@@ -9,6 +9,7 @@ MAX_TOKENS_PER_DAY = 50_000
 HOUR_WINDOW_SECONDS = 3600
 DAY_WINDOW_SECONDS = 86400
 
+
 def get_table():
     dynamodb = boto3.resource("dynamodb")
     table = dynamodb.Table(os.environ["THROTTLE_TABLE_NAME"])

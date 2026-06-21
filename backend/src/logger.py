@@ -17,6 +17,7 @@ def log_event(event_type: str, **kwargs):
         )
     )
 
+
 def log_error(error_type: str, error_message: str, **kwargs):
     logger.error(
         json.dumps(

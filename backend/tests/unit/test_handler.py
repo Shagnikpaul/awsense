@@ -52,7 +52,7 @@ def test_chat_success(
         "httpMethod": "POST",
         "path": "/chat",
         "headers": {"x-api-key": "test-api-key"},
-        "body": json.dumps({"message": "What is S3?",  "sessionId": "test-session"}),
+        "body": json.dumps({"message": "What is S3?", "sessionId": "test-session"}),
     }
 
     with patch("src.handler.API_KEY", "test-api-key"):

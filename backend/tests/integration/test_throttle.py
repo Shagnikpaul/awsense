@@ -10,9 +10,7 @@ def test_rate_limited(
     mock_load_session,
     mock_check_request_limit,
 ):
-    mock_load_session.return_value = {
-        "sessionId": "test-session"
-    }
+    mock_load_session.return_value = {"sessionId": "test-session"}
 
     mock_check_request_limit.return_value = (
         False,
@@ -22,9 +20,7 @@ def test_rate_limited(
     event = {
         "httpMethod": "POST",
         "path": "/chat",
-        "headers": {
-            "x-api-key": "test-api-key"
-        },
+        "headers": {"x-api-key": "test-api-key"},
         "body": json.dumps(
             {
                 "message": "What is S3?",
@@ -43,13 +39,8 @@ def test_rate_limited(
 
     assert response["statusCode"] == 429
 
-    assert (
-        response["headers"]["Retry-After"]
-        == "3600"
-    )
+    assert response["headers"]["Retry-After"] == "3600"
 
-    body = json.loads(
-        response["body"]
-    )
+    body = json.loads(response["body"])
 
     assert body["code"] == "RATE_LIMITED"
