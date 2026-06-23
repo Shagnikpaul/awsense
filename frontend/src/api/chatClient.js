@@ -30,7 +30,6 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 // Expected response: { answer, sources[], tokenUsage }
 // See: chatClient.js → sendMessage()
 
-// for now sessionID and topicFIlter are not passed to backend, but they will be in future when backend is developed more.
 export const sendMessage = async ({ message, sessionId, topicFilter }) => {
   const response = await fetch(`${API_BASE_URL}/chat`, {
     method: "POST",
