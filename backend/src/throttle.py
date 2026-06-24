@@ -1,7 +1,7 @@
 import os
 import boto3
 import time
-
+from src.logger import log_event
 # constraints
 MAX_REQUESTS_PER_HOUR = 20
 MAX_TOKENS_PER_DAY = 50_000
@@ -63,6 +63,15 @@ def reset_request_window(session: dict) -> None:
 
 def check_request_limit(session: dict) -> tuple[bool, int]:
     # reset hourly window if needed
+    log_event(
+        "THROTTLE_CHECK",
+        sessionId=session["sessionId"],
+        requestCount=session["requestCount"],
+        tokenCount=session["tokenCount"],
+        windowStart=session["windowStart"],
+        currentTime=current_timestamp(),
+    )
+
     if request_window_expired(session):
         reset_request_window(session)
 
@@ -71,10 +80,23 @@ def check_request_limit(session: dict) -> tuple[bool, int]:
         retry_after = HOUR_WINDOW_SECONDS - (
             current_timestamp() - session["windowStart"]
         )
+        log_event(
+            "THROTTLE_REJECTED",
+            reason="REQUEST_LIMIT",
+            sessionId=session["sessionId"],
+            requestCount=session["requestCount"],
+            retryAfter=retry_after,
+        )
         return False, max(retry_after, 0)
 
     # daily token limit check
     if session["tokenCount"] >= MAX_TOKENS_PER_DAY:
+        log_event(
+            "THROTTLE_REJECTED",
+            reason="TOKEN_LIMIT",
+            sessionId=session["sessionId"],
+            tokenCount=session["tokenCount"],
+        )
         return False, DAY_WINDOW_SECONDS
 
     return True, 0

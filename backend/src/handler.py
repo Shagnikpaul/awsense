@@ -22,7 +22,8 @@ from src.throttle import (  # noqa: E402
 )  # noqa: E402
 from src.logger import log_event, log_error  # noqa: E402
 from src.metrics import publish_output_tokens  # noqa: E402
-
+from src.query_classifier import is_greeting  # noqa: E402
+from groq import RateLimitError  # noqa: E402 
 # CORS headers
 headers = {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"}
 
@@ -133,7 +134,24 @@ def lambda_handler(event, context):
                 }
             ),
         }
-
+    if is_greeting(message):
+        return {
+            "statusCode": 200,
+            "headers": headers,
+            "body": json.dumps(
+                {
+                    "answer": (
+                        "Hello! I'm AWSense. Ask me a question about AWS "
+                        "services or architecture and I'll answer using AWS documentation."
+                    ),
+                    "sources": [],
+                    "tokenUsage": {
+                        "inputTokens": 0,
+                        "outputTokens": 0,
+                    },
+                }
+            ),
+        }
     # -------------------------
     # RAG PIPELINE
     # -------------------------
@@ -144,13 +162,57 @@ def lambda_handler(event, context):
         log_event(
             "RETRIEVAL_COMPLETE",
             sessionId=session_id,
-            topicFilter=topic_filter,
             docsReturned=len(docs),
+            scores=[round(d.get("score", 0), 4) for d in docs],
         )
+        if docs and docs[0].get("is_low_confidence"):
+            return {
+                "statusCode": 200,
+                "headers": headers,
+                "body": json.dumps(
+                    {
+                        "answer": (
+                            "I don't have knowledge on that topic yet based on my current AWS documentation dataset."
+                        ),
+                        "sources": [],
+                        "tokenUsage": {
+                            "inputTokens": 0,
+                            "outputTokens": 0,
+                        },
+                    }
+                ),
+            }
         prompt = builder.build(message, docs)
         answer, usage = generate_answer(prompt)
+        log_event(
+            "LLM_USAGE",
+            sessionId=session_id,
+            inputTokens=usage["inputTokens"],
+            outputTokens=usage["outputTokens"],
+            totalTokens=usage["inputTokens"] + usage["outputTokens"],
+        )
         publish_output_tokens(usage["outputTokens"])
-
+    
+    except RateLimitError:  # specifically for groq...
+        log_event(
+            "GROQ RATE_LIMITED",
+            sessionId=session_id,
+        )
+        return {
+            "statusCode": 429,
+            "headers": {
+                **headers,
+                "Retry-After": str(retry_after),
+            },
+            "body": json.dumps(
+                {
+                    "error": "Groq API Rate limit exceeded",
+                    "code": "RATE_LIMITED",
+                    "requestId": context.aws_request_id,
+                }
+            ),
+        }
+    
     except Exception as e:
         log_error(
             error_type=type(e).__name__,
