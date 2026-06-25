@@ -23,7 +23,8 @@ from src.throttle import (  # noqa: E402
 from src.logger import log_event, log_error  # noqa: E402
 from src.metrics import publish_output_tokens  # noqa: E402
 from src.query_classifier import is_greeting  # noqa: E402
-from groq import RateLimitError  # noqa: E402 
+from groq import RateLimitError  # noqa: E402
+
 # CORS headers
 headers = {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"}
 
@@ -192,7 +193,7 @@ def lambda_handler(event, context):
             totalTokens=usage["inputTokens"] + usage["outputTokens"],
         )
         publish_output_tokens(usage["outputTokens"])
-    
+
     except RateLimitError:  # specifically for groq...
         log_event(
             "GROQ RATE_LIMITED",
@@ -212,7 +213,7 @@ def lambda_handler(event, context):
                 }
             ),
         }
-    
+
     except Exception as e:
         log_error(
             error_type=type(e).__name__,

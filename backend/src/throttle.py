@@ -2,6 +2,7 @@ import os
 import boto3
 import time
 from src.logger import log_event
+
 # constraints
 MAX_REQUESTS_PER_HOUR = 20
 MAX_TOKENS_PER_DAY = 50_000

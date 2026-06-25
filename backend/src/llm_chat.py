@@ -52,7 +52,7 @@ OUTPUT GOAL:
     )
 
     answer = response.choices[0].message.content
-    
+
     usage = {
         "inputTokens": response.usage.prompt_tokens,  # type: ignore
         "outputTokens": response.usage.completion_tokens,  # type: ignore

@@ -97,11 +97,11 @@ class Retriever:
                 break
         log_event(
             "TOP_SCORE",
-            topScore=results[0]["score"] if results else "NONE", 
+            topScore=results[0]["score"] if results else "NONE",
         )
         if results:
             results[0]["is_low_confidence"] = results[0]["score"] > 1.0
-        
+
         # fallback
         if not results:
             for i in indices[0][:k]:
@@ -115,5 +115,5 @@ class Retriever:
                         "source": self.sources[i],
                     }
                 )
-        
+
         return results

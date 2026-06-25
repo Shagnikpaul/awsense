@@ -1,7 +1,13 @@
 name: Performance Report
 
+permissions:
+  contents: write
+
 on:
   workflow_dispatch:
+
+schedule:
+    - cron: "0 0 * * 0"
 
 jobs:
   generate-report:
@@ -9,4 +15,56 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Verify Python
+        run: python --version
+
+      - name: Install k6
+        run: |
+          sudo gpg -k
+          sudo apt-get update
+          sudo apt-get install -y gnupg software-properties-common
+          curl -fsSL https://dl.k6.io/key.gpg | sudo gpg --dearmor -o /usr/share/keyrings/k6-archive-keyring.gpg
+          echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
+          sudo apt-get update
+          sudo apt-get install -y k6
+      
+      - name: Verify k6
+        run: k6 version
+
+      - name: Create Reports Directory
+        run: mkdir -p reports/perf
+      - name: Run k6 Load Test
+        env:
+          API_BASE_URL: ${{ secrets.API_BASE_URL }}
+          API_KEY: ${{ secrets.API_KEY }}
+        run: |
+          k6 run \
+            --out json=reports/perf/raw.json \
+            k6/chat_load_test.js
+      - name: Generate Performance Report
+        run: python scripts/generate_perf_report.py
+
+      - name: Upload Performance Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: performance-report
+          path: reports/perf/
+
+      - name: Commit Performance Report
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add reports/perf/*.md
+
+          git diff --staged --quiet || (
+            git commit -m "Add performance report"
+            git push
+          )
