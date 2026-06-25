@@ -28,7 +28,7 @@ export function ChatWindow({ messages, isLoading }) {
   }
 
   return (
-    <ScrollArea className="flex-1 min-h-0 p-4 sm:p-6 bg-dg-base">
+    <ScrollArea className="flex-1 min-h-0 p-4  sm:p-6 bg-dg-base">
       <div className="max-w-4xl mx-auto flex flex-col pb-48">
         {messages.map((msg) => (
           <MessageBubble
@@ -46,7 +46,7 @@ export function ChatWindow({ messages, isLoading }) {
               <div className="w-7 h-7 shrink-0 rounded-full bg-dg-elevated border border-dg-border flex items-center justify-center">
                 <Sparkles className="w-3.5 h-3.5 text-dg-textMuted" />
               </div>
-              <div className="rounded-squircle px-5 py-4 bg-dg-surface text-dg-textPrimary flex items-center gap-1.5 h-[52px]">
+              <div className="rounded-squircle px-5 py-4 bg-dg-surface text-dg-textPrimary flex items-center gap-1.5 h-[5 px]">
                 <span
                   className="flex h-2 w-2 rounded-full bg-dg-accent animate-bounce"
                   style={{ animationDelay: "0ms" }}
