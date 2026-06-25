@@ -1,0 +1,12 @@
+name: Performance Report
+
+on:
+  workflow_dispatch:
+
+jobs:
+  generate-report:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
