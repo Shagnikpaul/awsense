@@ -86,18 +86,19 @@ def lambda_handler(event, context):
             }
     # raise Exception("Alarm test")
     message = body.get("message", "")
-    session_id = body.get("sessionId")
+    client_id = body.get("clientId")
+    conversation_id = body.get("conversationId")
     topic_filter = body.get("topicFilter")
     log_event(
         "REQUEST_RECEIVED",
         sessionId=session_id,
         topicFilter=topic_filter,
     )
-    if not session_id:
+    if not client_id:
         return {
             "statusCode": 400,
             "headers": headers,
-            "body": json.dumps({"error": "sessionId is required"}),
+            "body": json.dumps({"error": "clientId is required"}),
         }
 
     # -------------------------

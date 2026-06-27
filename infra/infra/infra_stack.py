@@ -56,6 +56,49 @@ class InfraStack(Stack):
             removal_policy=RemovalPolicy.DESTROY,  # dev only
         )
 
+        conversations_table = dynamodb.Table(
+            self,
+            "ConversationsTable",
+            table_name="awsense-conversations",
+            partition_key=dynamodb.Attribute(
+                name="conversationId",
+                type=dynamodb.AttributeType.STRING,
+            ),
+            billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST,
+            time_to_live_attribute="ttl",
+            removal_policy=RemovalPolicy.DESTROY,  # dev only
+        )
+
+        conversations_table.add_global_secondary_index(
+            index_name="clientId-updatedAt-index",
+            partition_key=dynamodb.Attribute(
+                name="clientId",
+                type=dynamodb.AttributeType.STRING,
+            ),
+            sort_key=dynamodb.Attribute(
+                name="updatedAt",
+                type=dynamodb.AttributeType.STRING,
+            ),
+            projection_type=dynamodb.ProjectionType.ALL,
+        )     
+
+        chat_messages_table = dynamodb.Table(
+            self,
+            "ChatMessagesTable",
+            table_name="awsense-chat-messages",
+            partition_key=dynamodb.Attribute(
+                name="conversationId",
+                type=dynamodb.AttributeType.STRING,
+            ),
+            sort_key=dynamodb.Attribute(
+                name="timestamp",
+                type=dynamodb.AttributeType.STRING,
+            ),
+            billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST,
+            time_to_live_attribute="ttl",
+            removal_policy=RemovalPolicy.DESTROY,  # dev only
+        )
+
 
         distribution = cloudfront.Distribution(
             self,
@@ -106,6 +149,8 @@ class InfraStack(Stack):
                 "HF_TOKEN": hf_token,
                 "THROTTLE_TABLE_NAME": throttle_table.table_name,
                 "LOG_LEVEL": "INFO",
+                "CONVERSATIONS_TABLE": conversations_table.table_name,
+                "CHAT_MESSAGES_TABLE": chat_messages_table.table_name,
             },
         )
         chatbot_lambda.add_to_role_policy(
@@ -201,6 +246,9 @@ class InfraStack(Stack):
         )
 
         throttle_table.grant_read_write_data(chatbot_lambda)
+        conversations_table.grant_read_write_data(chatbot_lambda)
+        chat_messages_table.grant_read_write_data(chatbot_lambda)
+
         api = apigw.RestApi(
             self,
             "AwsenseApi",

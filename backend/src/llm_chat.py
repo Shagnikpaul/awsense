@@ -5,7 +5,7 @@ import os
 def generate_answer(prompt: str) -> tuple[str | None, dict]:
     client = Groq(api_key=os.getenv("GROQ_API_KEY"), max_retries=0)
     response = client.chat.completions.create(
-        model="llama-3.1-8b-instant",
+        model="openai/gpt-oss-20b",
         messages=[
             {
                 "role": "system",
