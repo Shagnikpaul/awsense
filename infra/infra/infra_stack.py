@@ -289,6 +289,31 @@ class InfraStack(Stack):
             apigw.LambdaIntegration(chatbot_lambda)  # type: ignore
         )
 
+        conversations = api.root.add_resource(
+        "conversations",
+        default_cors_preflight_options={
+            "allow_origins": apigw.Cors.ALL_ORIGINS,
+            "allow_methods": ["GET", "OPTIONS"],
+            "allow_headers": [
+                "Content-Type",
+                "x-api-key",
+                "x-client-id",
+            ],
+        },
+    )
+
+        conversations.add_method(
+            "GET",
+            apigw.LambdaIntegration(chatbot_lambda),  # type: ignore
+        )
+
+        conversation = conversations.add_resource("{conversationId}")
+
+        conversation.add_method(
+            "GET",
+            apigw.LambdaIntegration(chatbot_lambda),  # type: ignore
+        )
+
         CfnOutput(
             self,
             "ApiUrl",

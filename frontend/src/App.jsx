@@ -20,10 +20,14 @@ function App() {
     isLoading,
     isRateLimited,
     setIsRateLimited,
+    conversationId,
     topicFilter,
     setTopicFilter,
     sendMessage,
-    clearConversation,
+    newChat,
+    conversations,
+    isLoadingConversations,
+    loadConversation,
   } = useChat();
 
   useEffect(() => {
@@ -37,7 +41,13 @@ function App() {
   return (
     <TooltipProvider>
       <SidebarProvider>
-        <AppSidebar clearConversation={clearConversation} />
+        <AppSidebar
+          newChat={newChat}
+          conversations={conversations}
+          isLoadingConversations={isLoadingConversations}
+          loadConversation={loadConversation}
+          conversationId={conversationId}
+        />
 
         <SidebarInset>
           <div className="flex h-screen flex-col bg-dg-base text-dg-textPrimary overflow-hidden font-sans">

@@ -37,6 +37,7 @@ export function ChatWindow({ messages, isLoading }) {
             content={msg.content}
             sources={msg.sources}
             tokenUsage={msg.tokenUsage}
+            timestamp={msg.timestamp}
           />
         ))}
 

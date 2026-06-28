@@ -26,8 +26,11 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 //   inference: "pending-bedrock-access"
 // };
 
-// Expected request body: { message, sessionId, topicFilter }
-// Expected response: { answer, sources[], tokenUsage }
+// Expected request body:
+// { message, clientId, conversationId, topicFilter }
+
+// Expected response:
+// { answer, sources[], tokenUsage }
 // See: chatClient.js → sendMessage()
 
 export const sendMessage = async ({ message, clientId, conversationId, topicFilter }) => {
@@ -46,11 +49,62 @@ export const sendMessage = async ({ message, clientId, conversationId, topicFilt
   });
 
   if (!response.ok) {
-    throw new Error("Failed to fetch response");
+    const error = await response.json().catch(() => ({}));
+
+    throw {
+      status: response.status,
+      ...error,
+    };
   }
 
   return response.json();
 };
+
+export const getConversations = async (clientId) => {
+  const response = await fetch(`${API_BASE_URL}/conversations`, {
+    method: "GET",
+    headers: {
+      "x-api-key": import.meta.env.VITE_API_KEY,
+      "x-client-id": clientId,
+    },
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+
+    throw {
+      status: response.status,
+      ...error,
+    };
+  }
+
+  return response.json();
+};
+
+export const getConversation = async (conversationId, clientId) => {
+  const response = await fetch(
+    `${API_BASE_URL}/conversations/${conversationId}`,
+    {
+      method: "GET",
+      headers: {
+        "x-api-key": import.meta.env.VITE_API_KEY,
+        "x-client-id": clientId,
+      },
+    },
+  );
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+
+    throw {
+      status: response.status,
+      ...error,
+    };
+  }
+
+  return response.json();
+};
+
 
 export const checkHealth = async () => {
   const response = await fetch(`${API_BASE_URL}/health`);

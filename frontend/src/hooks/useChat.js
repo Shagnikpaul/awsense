@@ -1,6 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { sendMessage as apiSendMessage } from "../api/chatClient";
+import {
+  sendMessage as apiSendMessage,
+  getConversation,
+  getConversations,
+} from "../api/chatClient";
 
 // ---------------------------------------------------------------------------
 // Persistent, tamper-resistant client ID helpers
@@ -75,10 +79,60 @@ export function useChat() {
   const [conversationId, setConversationId] = useState(null);
   const [topicFilter, setTopicFilter] = useState("All");
 
+  // for sidebar list
+  const [conversations, setConversations] = useState([]);
+  const [isLoadingConversations, setIsLoadingConversations] = useState(false);
+
   // Load (or create) the persistent, verified client ID once on mount.
   useEffect(() => {
     loadOrCreateClientId().then(setClientId);
   }, []);
+
+  // for side bar list initial loading...
+  useEffect(() => {
+    if (!clientId) return;
+
+    async function loadConversations() {
+      setIsLoadingConversations(true);
+
+      try {
+        const data = await getConversations(clientId);
+        setConversations(data);
+      } catch (error) {
+        console.error("Failed to load conversations:", error);
+      } finally {
+        setIsLoadingConversations(false);
+      }
+    }
+
+    loadConversations();
+  }, [clientId]);
+
+  const loadConversation = useCallback(async (conversationId) => {
+    if (!clientId) return;
+
+    setIsLoading(true);
+
+    try {
+      const data = await getConversation(conversationId, clientId);
+
+      setConversationId(conversationId);
+      
+      // assigning id's to the messages which are be used as keys by react
+      setMessages(
+        data.map((message) => ({
+          id: uuidv4(),
+          ...message,
+        })),
+      );
+      setIsRateLimited(false);
+    } catch (error) {
+      console.error("Failed to load conversation:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [clientId]);
+
 
   const sendMessage = useCallback(
     async (text) => {
@@ -96,24 +150,12 @@ export function useChat() {
         content: text,
       };
 
-      setMessages((prev) => {
-        const newMessages = [...prev, userMessage];
-
-        // Keep only last 5 turns (10 messages: 5 user, 5 assistant)
-        if (newMessages.length > 10) {
-          return newMessages.slice(newMessages.length - 10);
-        }
-
-        return newMessages;
-      });
+      setMessages((prev) => [...prev, userMessage]);
 
       setIsLoading(true);
       setIsRateLimited(false);
 
       try {
-        // TODO [BACKEND INTEGRATION]: Replace this mock response with a real call to POST /chat
-        // Expected request body: { message, clientId, topicFilter }
-        // Expected response: { answer, sources[], tokenUsage }
         const response = await apiSendMessage({
           message: text,
           clientId,
@@ -129,15 +171,10 @@ export function useChat() {
           tokenUsage: response.token_usage || response.tokenUsage,
         };
 
-        setMessages((prev) => {
-          const newMessages = [...prev, assistantMessage];
+        setMessages((prev) => [...prev, assistantMessage]);
+        const conversations = await getConversations(clientId);
+        setConversations(conversations);
 
-          if (newMessages.length > 10) {
-            return newMessages.slice(newMessages.length - 10);
-          }
-
-          return newMessages;
-        });
       } catch (error) {
         if (error?.status === 429 || error?.code === "RATE_LIMIT") {
           setIsRateLimited(true);
@@ -173,5 +210,8 @@ export function useChat() {
     setTopicFilter,
     sendMessage,
     newChat,
+    conversations,
+    isLoadingConversations,
+    loadConversation,
   };
 }

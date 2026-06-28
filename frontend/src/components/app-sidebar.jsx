@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Trash2, MessageSquare, BotIcon } from "lucide-react"
+import { MessageSquare, BotIcon, PlusIcon, Loader2 } from "lucide-react"
 
 import {
   Sidebar,
@@ -17,14 +17,31 @@ import {
   SidebarGroupContent,
 } from "@/components/ui/sidebar"
 
-// Placeholder chat history items
-const chatHistory = [
-  { id: 1, title: "How to configure VPC Peering" },
-  { id: 2, title: "S3 Bucket Policy for CloudFront" },
-  { id: 3, title: "Lambda execution role permissions" },
-]
+/** Format an ISO timestamp into a short relative or absolute label. */
+function formatUpdatedAt(isoString) {
+  if (!isoString) return null;
+  const date = new Date(isoString);
+  const now = new Date();
+  const diffMs = now - date;
+  const diffMins = Math.floor(diffMs / 60_000);
+  const diffHours = Math.floor(diffMs / 3_600_000);
+  const diffDays = Math.floor(diffMs / 86_400_000);
 
-export function AppSidebar({ clearConversation, ...props }) {
+  if (diffMins < 1) return "Just now";
+  if (diffMins < 60) return `${diffMins}m ago`;
+  if (diffHours < 24) return `${diffHours}h ago`;
+  if (diffDays < 7) return `${diffDays}d ago`;
+  return date.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+}
+
+export function AppSidebar({
+  newChat,
+  conversations = [],
+  isLoadingConversations = false,
+  loadConversation,
+  conversationId,
+  ...props
+}) {
   return (
     <Sidebar collapsible="icon" {...props}>
       {/* Header: Logo + Subheading */}
@@ -52,37 +69,77 @@ export function AppSidebar({ clearConversation, ...props }) {
         </SidebarMenu>
       </SidebarHeader>
 
-      {/* Content: Chat History */}
+      {/* Content: Conversation History */}
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Recent Chats</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {/* TODO [BACKEND INTEGRATION]: Replace static placeholders with real session history when persistence is implemented */}
-              {chatHistory.map((chat) => (
-                <SidebarMenuItem key={chat.id}>
-                  <SidebarMenuButton tooltip={chat.title} className="opacity-50 cursor-default pointer-events-none">
-                    <MessageSquare className="shrink-0" />
-                    <span>{chat.title}</span>
-                  </SidebarMenuButton>
+              {isLoadingConversations ? (
+                /* Loading skeleton */
+                <SidebarMenuItem>
+                  <div className="flex items-center gap-2 px-2 py-2 text-sidebar-foreground/50 text-sm">
+                    <Loader2 className="h-4 w-4 animate-spin shrink-0" />
+                    <span className="font-inter text-xs">Loading…</span>
+                  </div>
                 </SidebarMenuItem>
-              ))}
+              ) : conversations.length === 0 ? (
+                /* Empty state */
+                <SidebarMenuItem>
+                  <div className="px-2 py-4 text-sidebar-foreground/40 text-xs font-inter text-center select-none">
+                    No conversations yet
+                  </div>
+                </SidebarMenuItem>
+              ) : (
+                /* Real conversation list */
+                conversations.map((conv) => {
+                  const isActive = conv.conversationId === conversationId;
+                  const updatedLabel = formatUpdatedAt(conv.updatedAt);
+
+                  return (
+                    <SidebarMenuItem key={conv.conversationId}>
+                      <SidebarMenuButton
+                        //tooltip={conv.title}
+                        isActive={isActive}
+                        onClick={() => loadConversation(conv.conversationId)}
+                        className={
+                          isActive
+                            ? "bg-orange-700 text-sidebar-accent-foreground p-5"
+                            : "hover:bg-sidebar-accent/50 p-5"
+                        }
+                      >
+                        <MessageSquare className="shrink-0" />
+                        <div className="flex flex-col min-w-0 flex-1">
+                          <span className="truncate text-sm font-medium leading-tight">
+                            {conv.title}
+                          </span>
+                          {updatedLabel && (
+                            <span className="truncate text-xs text-sidebar-foreground/50 font-inter leading-tight">
+                              {updatedLabel}
+                            </span>
+                          )}
+                        </div>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
 
-      {/* Footer: Clear Conversation */}
+      {/* Footer: New Chat */}
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
-              tooltip="Clear Conversation"
-              onClick={clearConversation}
-              className="text-sidebar-foreground/70 hover:text-destructive hover:bg-destructive/10"
+              tooltip="New Chat"
+              onClick={newChat}
+              className="text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
             >
-              <Trash2 className="shrink-0" />
-              <span>Clear Conversation</span>
+              <PlusIcon className="shrink-0" />
+              <span>New Chat</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

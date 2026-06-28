@@ -66,7 +66,7 @@ def check_request_limit(session: dict) -> tuple[bool, int]:
     # reset hourly window if needed
     log_event(
         "THROTTLE_CHECK",
-        sessionId=session["sessionId"],
+        clientId=session["sessionId"],
         requestCount=session["requestCount"],
         tokenCount=session["tokenCount"],
         windowStart=session["windowStart"],
@@ -84,7 +84,7 @@ def check_request_limit(session: dict) -> tuple[bool, int]:
         log_event(
             "THROTTLE_REJECTED",
             reason="REQUEST_LIMIT",
-            sessionId=session["sessionId"],
+            clientId=session["sessionId"],
             requestCount=session["requestCount"],
             retryAfter=retry_after,
         )
@@ -95,7 +95,7 @@ def check_request_limit(session: dict) -> tuple[bool, int]:
         log_event(
             "THROTTLE_REJECTED",
             reason="TOKEN_LIMIT",
-            sessionId=session["sessionId"],
+            clientId=session["sessionId"],
             tokenCount=session["tokenCount"],
         )
         return False, DAY_WINDOW_SECONDS
