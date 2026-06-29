@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { MessageSquare, BotIcon, PlusIcon, Loader2 } from "lucide-react"
+import * as React from "react";
+import { MessageSquare, BotIcon, PlusIcon, Loader2 } from "lucide-react";
 
 import {
   Sidebar,
@@ -15,7 +15,7 @@ import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarGroupContent,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
 /** Format an ISO timestamp into a short relative or absolute label. */
 function formatUpdatedAt(isoString) {
@@ -147,5 +147,5 @@ export function AppSidebar({
 
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }

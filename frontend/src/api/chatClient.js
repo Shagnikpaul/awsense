@@ -33,7 +33,12 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 // { answer, sources[], tokenUsage }
 // See: chatClient.js → sendMessage()
 
-export const sendMessage = async ({ message, clientId, conversationId, topicFilter }) => {
+export const sendMessage = async ({
+  message,
+  clientId,
+  conversationId,
+  topicFilter,
+}) => {
   const response = await fetch(`${API_BASE_URL}/chat`, {
     method: "POST",
     headers: {
@@ -104,7 +109,6 @@ export const getConversation = async (conversationId, clientId) => {
 
   return response.json();
 };
-
 
 export const checkHealth = async () => {
   const response = await fetch(`${API_BASE_URL}/health`);

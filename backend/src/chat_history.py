@@ -19,18 +19,15 @@ def convert_decimals(value):
 
     return value
 
+
 def get_conversations_table():
     dynamodb = boto3.resource("dynamodb")
-    return dynamodb.Table(
-        os.environ["CONVERSATIONS_TABLE"]
-    )
+    return dynamodb.Table(os.environ["CONVERSATIONS_TABLE"])
 
 
 def get_messages_table():
     dynamodb = boto3.resource("dynamodb")
-    return dynamodb.Table(
-        os.environ["CHAT_MESSAGES_TABLE"]
-    )
+    return dynamodb.Table(os.environ["CHAT_MESSAGES_TABLE"])
 
 
 def now_iso():
@@ -62,11 +59,8 @@ def create_conversation(client_id: str, conversation_id: str, title: str):
 
 
 def save_message(
-        conversation_id: str,
-        role: str,
-        content: str,
-        sources=None,
-        token_usage=None):
+    conversation_id: str, role: str, content: str, sources=None, token_usage=None
+):
     """
     Saves a single chat message.
     """
@@ -140,6 +134,7 @@ def list_conversations(client_id: str, limit: int = 20):
 
     return items
 
+
 def conversation_exists(conversation_id):
     response = get_conversations_table().get_item(
         Key={
@@ -148,6 +143,7 @@ def conversation_exists(conversation_id):
     )
 
     return "Item" in response
+
 
 def get_conversation_metadata(conversation_id: str):
     response = get_conversations_table().get_item(

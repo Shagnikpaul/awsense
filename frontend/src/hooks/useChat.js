@@ -108,31 +108,33 @@ export function useChat() {
     loadConversations();
   }, [clientId]);
 
-  const loadConversation = useCallback(async (conversationId) => {
-    if (!clientId) return;
+  const loadConversation = useCallback(
+    async (conversationId) => {
+      if (!clientId) return;
 
-    setIsLoading(true);
+      setIsLoading(true);
 
-    try {
-      const data = await getConversation(conversationId, clientId);
+      try {
+        const data = await getConversation(conversationId, clientId);
 
-      setConversationId(conversationId);
-      
-      // assigning id's to the messages which are be used as keys by react
-      setMessages(
-        data.map((message) => ({
-          id: uuidv4(),
-          ...message,
-        })),
-      );
-      setIsRateLimited(false);
-    } catch (error) {
-      console.error("Failed to load conversation:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [clientId]);
+        setConversationId(conversationId);
 
+        // assigning id's to the messages which are be used as keys by react
+        setMessages(
+          data.map((message) => ({
+            id: uuidv4(),
+            ...message,
+          })),
+        );
+        setIsRateLimited(false);
+      } catch (error) {
+        console.error("Failed to load conversation:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [clientId],
+  );
 
   const sendMessage = useCallback(
     async (text) => {
@@ -174,7 +176,6 @@ export function useChat() {
         setMessages((prev) => [...prev, assistantMessage]);
         const conversations = await getConversations(clientId);
         setConversations(conversations);
-
       } catch (error) {
         if (error?.status === 429 || error?.code === "RATE_LIMIT") {
           setIsRateLimited(true);

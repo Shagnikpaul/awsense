@@ -10,7 +10,7 @@ def test_rate_limited(
     mock_load_session,
     mock_check_request_limit,
 ):
-    mock_load_session.return_value = {"sessionId": "test-session"}
+    mock_load_session.return_value = {"clientId": "test-client"}
 
     mock_check_request_limit.return_value = (
         False,
@@ -24,7 +24,8 @@ def test_rate_limited(
         "body": json.dumps(
             {
                 "message": "What is S3?",
-                "sessionId": "test-session",
+                "clientId": "test-client",
+                "conversationId": "test-conversation",
             }
         ),
     }
@@ -32,10 +33,8 @@ def test_rate_limited(
     class MockContext:
         aws_request_id = "test-request-id"
 
-    response = lambda_handler(
-        event,
-        MockContext(),
-    )
+    with patch("src.handler.API_KEY", "test-api-key"):
+        response = lambda_handler(event, MockContext())
 
     assert response["statusCode"] == 429
 

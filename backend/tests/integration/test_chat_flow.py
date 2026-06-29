@@ -12,7 +12,13 @@ from src.handler import lambda_handler
 @patch("src.handler.Retriever")
 @patch("src.handler.check_request_limit")
 @patch("src.handler.load_session")
+@patch("src.handler.save_message")
+@patch("src.handler.create_conversation")
+@patch("src.handler.conversation_exists")
 def test_chat_flow(
+    mock_conversation_exists,
+    mock_create_conversation,
+    mock_save_message,
     mock_load_session,
     mock_check_request_limit,
     mock_retriever_cls,
@@ -54,6 +60,9 @@ def test_chat_flow(
         },
     )
 
+    mock_conversation_exists.return_value = True
+    mock_save_message.return_value = None
+
     event = {
         "httpMethod": "POST",
         "path": "/chat",
@@ -63,7 +72,8 @@ def test_chat_flow(
         "body": json.dumps(
             {
                 "message": "What is S3?",
-                "sessionId": "test-session",
+                "clientId": "test-client",
+                "conversationId": "test-conversation",
             }
         ),
     }
@@ -71,13 +81,12 @@ def test_chat_flow(
     class MockContext:
         aws_request_id = "test-id"
 
-    response = lambda_handler(
-        event,
-        MockContext(),
-    )
+    with patch("src.handler.API_KEY", "test-api-key"):
+        response = lambda_handler(event, MockContext())
 
     assert response["statusCode"] == 200
 
     body = json.loads(response["body"])
 
     assert body["answer"] == "Amazon S3 is an object storage service."
+    assert mock_save_message.call_count == 2

@@ -30,7 +30,7 @@ from src.chat_history import (  # noqa: E402
     get_conversation,
     list_conversations,
     conversation_exists,
-    get_conversation_metadata
+    get_conversation_metadata,
 )
 
 # CORS headers
@@ -126,7 +126,7 @@ def lambda_handler(event, context):
             "headers": headers,
             "body": json.dumps(messages),
         }
-    
+
     # -------------------------
     # METHOD VALIDATION
     # -------------------------
@@ -178,14 +178,13 @@ def lambda_handler(event, context):
             "headers": headers,
             "body": json.dumps({"error": "clientId is required"}),
         }
-    
+
     if not conversation_id:
         return {
             "statusCode": 400,
             "headers": headers,
             "body": json.dumps({"error": "conversationId is required"}),
         }
-
 
     # -------------------------
     # VALIDATION
@@ -222,7 +221,7 @@ def lambda_handler(event, context):
                 }
             ),
         }
-    
+
     if not conversation_exists(conversation_id):
         create_conversation(
             client_id=client_id,
@@ -256,7 +255,7 @@ def lambda_handler(event, context):
             sources=[],
             token_usage=greeting_response["tokenUsage"],
         )
-        
+
         return {
             "statusCode": 200,
             "headers": headers,
@@ -354,11 +353,12 @@ def lambda_handler(event, context):
     )
 
     save_message(
-    conversation_id=conversation_id,
-    role="assistant",
-    content=response["answer"],
-    sources=response["sources"],
-    token_usage=response["token_usage"],)
+        conversation_id=conversation_id,
+        role="assistant",
+        content=response["answer"],
+        sources=response["sources"],
+        token_usage=response["token_usage"],
+    )
 
     # -------------------------
     # SUCCESS RESPONSE
