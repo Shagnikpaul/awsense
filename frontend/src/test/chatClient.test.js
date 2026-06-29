@@ -138,10 +138,7 @@ describe("chatClient", () => {
       json: async () => mockMessages,
     });
 
-    const result = await getConversation(
-      "conv-123",
-      "client-123",
-    );
+    const result = await getConversation("conv-123", "client-123");
 
     expect(result).toEqual(mockMessages);
 
