@@ -22,6 +22,16 @@ from src.throttle import (  # noqa: E402
 )  # noqa: E402
 from src.logger import log_event, log_error  # noqa: E402
 from src.metrics import publish_output_tokens  # noqa: E402
+from src.query_classifier import is_greeting  # noqa: E402
+from groq import RateLimitError  # noqa: E402
+from src.chat_history import (  # noqa: E402
+    create_conversation,
+    save_message,
+    get_conversation,
+    list_conversations,
+    conversation_exists,
+    get_conversation_metadata,
+)
 
 # CORS headers
 headers = {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"}
@@ -45,6 +55,76 @@ def lambda_handler(event, context):
             "statusCode": 200,
             "headers": headers,
             "body": json.dumps({"status": "healthy", "service": "AWSense"}),
+        }
+
+    # -------------------------
+    # GET CONVERSATIONS (all messsages in a conversation)
+    # -------------------------
+    if method == "GET" and path == "/conversations":
+
+        if request_api_key != API_KEY:
+            return {
+                "statusCode": 401,
+                "headers": headers,
+                "body": json.dumps({"error": "Unauthorized"}),
+            }
+
+        client_id = request_headers.get("x-client-id")
+
+        if not client_id:
+            return {
+                "statusCode": 400,
+                "headers": headers,
+                "body": json.dumps({"error": "clientId header is required"}),
+            }
+
+        conversations = list_conversations(client_id)
+
+        return {
+            "statusCode": 200,
+            "headers": headers,
+            "body": json.dumps(conversations),
+        }
+    # -------------------------
+    # GET CONVERSATION
+    # -------------------------
+    if method == "GET" and path.startswith("/conversations/"):
+
+        if request_api_key != API_KEY:
+            return {
+                "statusCode": 401,
+                "headers": headers,
+                "body": json.dumps({"error": "Unauthorized"}),
+            }
+        # first check if the conversation actually belongs to the cliend requesting it...
+        conversation_id = path.split("/")[-1]
+        client_id = request_headers.get("x-client-id")
+        if not client_id:
+            return {
+                "statusCode": 400,
+                "headers": headers,
+                "body": json.dumps({"error": "clientId header is required"}),
+            }
+        conversation = get_conversation_metadata(conversation_id)
+        if conversation is None:
+            return {
+                "statusCode": 404,
+                "headers": headers,
+                "body": json.dumps({"error": "Conversation not found"}),
+            }
+
+        if conversation["clientId"] != client_id:
+            return {
+                "statusCode": 403,
+                "headers": headers,
+                "body": json.dumps({"error": "Forbidden"}),
+            }
+        messages = get_conversation(conversation_id)
+
+        return {
+            "statusCode": 200,
+            "headers": headers,
+            "body": json.dumps(messages),
         }
 
     # -------------------------
@@ -84,18 +164,26 @@ def lambda_handler(event, context):
             }
     # raise Exception("Alarm test")
     message = body.get("message", "")
-    session_id = body.get("sessionId")
+    client_id = body.get("clientId")
+    conversation_id = body.get("conversationId")
     topic_filter = body.get("topicFilter")
     log_event(
         "REQUEST_RECEIVED",
-        sessionId=session_id,
+        sessionId=client_id,
         topicFilter=topic_filter,
     )
-    if not session_id:
+    if not client_id:
         return {
             "statusCode": 400,
             "headers": headers,
-            "body": json.dumps({"error": "sessionId is required"}),
+            "body": json.dumps({"error": "clientId is required"}),
+        }
+
+    if not conversation_id:
+        return {
+            "statusCode": 400,
+            "headers": headers,
+            "body": json.dumps({"error": "conversationId is required"}),
         }
 
     # -------------------------
@@ -110,13 +198,13 @@ def lambda_handler(event, context):
             "body": json.dumps({"error": error}),
         }
 
-    session = load_session(session_id)
+    session = load_session(client_id)
     allowed, retry_after = check_request_limit(session)
 
     if not allowed:
         log_event(
             "RATE_LIMITED",
-            sessionId=session_id,
+            sessionId=client_id,
             retryAfter=retry_after,
         )
         return {
@@ -134,6 +222,45 @@ def lambda_handler(event, context):
             ),
         }
 
+    if not conversation_exists(conversation_id):
+        create_conversation(
+            client_id=client_id,
+            conversation_id=conversation_id,
+            title=message[:60],
+        )
+
+    save_message(
+        conversation_id=conversation_id,
+        role="user",
+        content=message,
+    )
+
+    if is_greeting(message):
+        greeting_response = {
+            "answer": (
+                "Hello! I'm AWSense. Ask me a question about AWS "
+                "services or architecture and I'll answer using AWS documentation."
+            ),
+            "sources": [],
+            "tokenUsage": {
+                "inputTokens": 0,
+                "outputTokens": 0,
+            },
+        }
+
+        save_message(
+            conversation_id=conversation_id,
+            role="assistant",
+            content=greeting_response["answer"],
+            sources=[],
+            token_usage=greeting_response["tokenUsage"],
+        )
+
+        return {
+            "statusCode": 200,
+            "headers": headers,
+            "body": json.dumps(greeting_response),
+        }
     # -------------------------
     # RAG PIPELINE
     # -------------------------
@@ -143,19 +270,71 @@ def lambda_handler(event, context):
         docs = retriever.search(message, topic_filter=topic_filter)
         log_event(
             "RETRIEVAL_COMPLETE",
-            sessionId=session_id,
-            topicFilter=topic_filter,
+            sessionId=client_id,
             docsReturned=len(docs),
+            scores=[round(d.get("score", 0), 4) for d in docs],
         )
+        if docs and docs[0].get("is_low_confidence"):
+            low_confidence_response = {
+                "answer": (
+                    "I don't have knowledge on that topic yet based on my current AWS documentation dataset."
+                ),
+                "sources": [],
+                "tokenUsage": {
+                    "inputTokens": 0,
+                    "outputTokens": 0,
+                },
+            }
+
+            save_message(
+                conversation_id=conversation_id,
+                role="assistant",
+                content=low_confidence_response["answer"],
+                sources=[],
+                token_usage=low_confidence_response["tokenUsage"],
+            )
+
+            return {
+                "statusCode": 200,
+                "headers": headers,
+                "body": json.dumps(low_confidence_response),
+            }
         prompt = builder.build(message, docs)
         answer, usage = generate_answer(prompt)
+        log_event(
+            "LLM_USAGE",
+            sessionId=client_id,
+            inputTokens=usage["inputTokens"],
+            outputTokens=usage["outputTokens"],
+            totalTokens=usage["inputTokens"] + usage["outputTokens"],
+        )
         publish_output_tokens(usage["outputTokens"])
+
+    except RateLimitError:  # specifically for groq...
+        log_event(
+            "GROQ RATE_LIMITED",
+            sessionId=client_id,
+        )
+        return {
+            "statusCode": 429,
+            "headers": {
+                **headers,
+                "Retry-After": str(retry_after),
+            },
+            "body": json.dumps(
+                {
+                    "error": "Groq API Rate limit exceeded",
+                    "code": "RATE_LIMITED",
+                    "requestId": context.aws_request_id,
+                }
+            ),
+        }
 
     except Exception as e:
         log_error(
             error_type=type(e).__name__,
             error_message=str(e),
-            sessionId=session_id,
+            sessionId=client_id,
             topicFilter=topic_filter,
         )
         return {
@@ -173,6 +352,14 @@ def lambda_handler(event, context):
         },
     )
 
+    save_message(
+        conversation_id=conversation_id,
+        role="assistant",
+        content=response["answer"],
+        sources=response["sources"],
+        token_usage=response["token_usage"],
+    )
+
     # -------------------------
     # SUCCESS RESPONSE
     # -------------------------
@@ -181,7 +368,7 @@ def lambda_handler(event, context):
     duration_ms = int((time.time() - start_time) * 1000)
     log_event(
         "REQUEST_SUCCESS",
-        sessionId=session_id,
+        sessionId=client_id,
         topicFilter=topic_filter,
         inputTokens=usage["inputTokens"],
         outputTokens=usage["outputTokens"],

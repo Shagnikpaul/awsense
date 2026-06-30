@@ -31,21 +31,6 @@ def test_prompt_contains_context():
     assert "Lambda runs code without servers." in prompt
 
 
-def test_prompt_contains_source():
-    builder = PromptBuilder()
-
-    docs = [
-        {
-            "text": "Serverless compute service",
-            "source": "aws.txt",
-        }
-    ]
-
-    prompt = builder.build("What is AWS?", docs)
-
-    assert "aws.txt" in prompt
-
-
 def test_prompt_formats_chunks_correctly():
     builder = PromptBuilder()
 
@@ -58,7 +43,7 @@ def test_prompt_formats_chunks_correctly():
 
     prompt = builder.build("Explain Lambda", docs)
 
-    assert "[Chunk 1 | Source: lambda.txt]" in prompt
+    assert "[Chunk 1]" in prompt
 
 
 def test_prompt_contains_context_section():

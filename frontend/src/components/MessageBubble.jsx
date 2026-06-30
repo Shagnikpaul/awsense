@@ -5,11 +5,19 @@ import { SourceCitations } from "./SourceCitations";
 import { TokenUsage } from "./TokenUsage";
 import Markdown from "react-markdown";
 
-export function MessageBubble({ role, content, sources, tokenUsage }) {
+export function MessageBubble({
+  role,
+  content,
+  sources,
+  tokenUsage,
+  timestamp,
+}) {
   const isUser = role === "user";
 
-  // Use current time for timestamp since it's not provided
-  const time = new Date().toLocaleTimeString([], {
+  // Use the message's own timestamp when loaded from history; fall back to now
+  const time = (
+    timestamp ? new Date(timestamp) : new Date()
+  ).toLocaleTimeString([], {
     hour: "2-digit",
     minute: "2-digit",
   });

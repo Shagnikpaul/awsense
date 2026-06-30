@@ -1,5 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { sendMessage, checkHealth } from "../api/chatClient";
+import {
+  sendMessage,
+  checkHealth,
+  getConversation,
+  getConversations,
+} from "../api/chatClient";
 
 global.fetch = vi.fn();
 
@@ -25,27 +30,47 @@ describe("chatClient", () => {
 
     const result = await sendMessage({
       message: "What is S3?",
-      sessionId: "abc123",
+      clientId: "client-123",
+      conversationId: "conv-123",
       topicFilter: "S3",
     });
 
     expect(result).toEqual(mockResponse);
 
-    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(fetch).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        method: "POST",
+        body: JSON.stringify({
+          message: "What is S3?",
+          clientId: "client-123",
+          conversationId: "conv-123",
+          topicFilter: "S3",
+        }),
+      }),
+    );
   });
 
   it("sendMessage throws when API fails", async () => {
     fetch.mockResolvedValue({
       ok: false,
+      status: 500,
+      json: async () => ({
+        error: "Failed to fetch response",
+      }),
     });
 
     await expect(
       sendMessage({
         message: "test",
-        sessionId: "abc123",
+        clientId: "client-123",
+        conversationId: "conv-123",
         topicFilter: "All",
       }),
-    ).rejects.toThrow("Failed to fetch response");
+    ).rejects.toMatchObject({
+      status: 500,
+      error: "Failed to fetch response",
+    });
   });
 
   it("checkHealth returns health response", async () => {
@@ -70,5 +95,61 @@ describe("chatClient", () => {
     });
 
     await expect(checkHealth()).rejects.toThrow("Health check failed");
+  });
+
+  it("getConversations returns conversations", async () => {
+    const mockData = [
+      {
+        conversationId: "conv-1",
+        title: "What is S3?",
+      },
+    ];
+
+    fetch.mockResolvedValue({
+      ok: true,
+      json: async () => mockData,
+    });
+
+    const result = await getConversations("client-123");
+
+    expect(result).toEqual(mockData);
+
+    expect(fetch).toHaveBeenCalledWith(
+      expect.stringContaining("/conversations"),
+      expect.objectContaining({
+        method: "GET",
+        headers: expect.objectContaining({
+          "x-client-id": "client-123",
+        }),
+      }),
+    );
+  });
+
+  it("getConversation returns messages", async () => {
+    const mockMessages = [
+      {
+        role: "user",
+        content: "What is S3?",
+      },
+    ];
+
+    fetch.mockResolvedValue({
+      ok: true,
+      json: async () => mockMessages,
+    });
+
+    const result = await getConversation("conv-123", "client-123");
+
+    expect(result).toEqual(mockMessages);
+
+    expect(fetch).toHaveBeenCalledWith(
+      expect.stringContaining("/conversations/conv-123"),
+      expect.objectContaining({
+        method: "GET",
+        headers: expect.objectContaining({
+          "x-client-id": "client-123",
+        }),
+      }),
+    );
   });
 });

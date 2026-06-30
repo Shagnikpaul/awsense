@@ -1,11 +1,16 @@
 import { useState, useEffect } from "react";
 import { useChat } from "./hooks/useChat";
-import { Sidebar } from "./components/Sidebar";
 import { ChatWindow } from "./components/ChatWindow";
 import { InputBar } from "./components/InputBar";
 import { RateLimitBanner } from "./components/RateLimitBanner";
 import { ThemeToggle } from "./components/ThemeToggle";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import {
+  SidebarProvider,
+  SidebarInset,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
+import { AppSidebar } from "./components/app-sidebar";
 
 function App() {
   const [darkMode, setDarkMode] = useState(true);
@@ -15,10 +20,14 @@ function App() {
     isLoading,
     isRateLimited,
     setIsRateLimited,
+    conversationId,
     topicFilter,
     setTopicFilter,
     sendMessage,
-    clearConversation,
+    newChat,
+    conversations,
+    isLoadingConversations,
+    loadConversation,
   } = useChat();
 
   useEffect(() => {
@@ -31,29 +40,43 @@ function App() {
 
   return (
     <TooltipProvider>
-      <div className="flex h-screen w-full bg-dg-base text-dg-textPrimary overflow-hidden font-sans">
-        <Sidebar messages={messages} clearConversation={clearConversation} />
+      <SidebarProvider>
+        <AppSidebar
+          newChat={newChat}
+          conversations={conversations}
+          isLoadingConversations={isLoadingConversations}
+          loadConversation={loadConversation}
+          conversationId={conversationId}
+        />
 
-        <div className="flex flex-1 flex-col relative h-full w-full">
-          <RateLimitBanner
-            isRateLimited={isRateLimited}
-            setIsRateLimited={setIsRateLimited}
-          />
+        <SidebarInset>
+          <div className="flex h-screen flex-col bg-dg-base text-dg-textPrimary overflow-hidden font-sans">
+            {/* Top bar: SidebarTrigger + ThemeToggle */}
+            <header className="flex h-12 shrink-0 items-center gap-2 px-4 border-b border-dg-border">
+              <SidebarTrigger className="-ml-1" />
+              <div className="ml-auto">
+                <ThemeToggle darkMode={darkMode} setDarkMode={setDarkMode} />
+              </div>
+            </header>
 
-          <div className="h-10 flex items-center justify-end px-4 shrink-0">
-            <ThemeToggle darkMode={darkMode} setDarkMode={setDarkMode} />
+            <RateLimitBanner
+              isRateLimited={isRateLimited}
+              setIsRateLimited={setIsRateLimited}
+            />
+
+            <div className="relative flex-1 min-h-0 flex flex-col">
+              <ChatWindow messages={messages} isLoading={isLoading} />
+
+              <InputBar
+                onSendMessage={sendMessage}
+                isLoading={isLoading}
+                topicFilter={topicFilter}
+                setTopicFilter={setTopicFilter}
+              />
+            </div>
           </div>
-
-          <ChatWindow messages={messages} isLoading={isLoading} />
-
-          <InputBar
-            onSendMessage={sendMessage}
-            isLoading={isLoading}
-            topicFilter={topicFilter}
-            setTopicFilter={setTopicFilter}
-          />
-        </div>
-      </div>
+        </SidebarInset>
+      </SidebarProvider>
     </TooltipProvider>
   );
 }

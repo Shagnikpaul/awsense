@@ -4,6 +4,7 @@ import pickle
 import numpy as np
 import requests
 from pathlib import Path
+from src.logger import log_event
 
 API_URL = (
     "https://router.huggingface.co/hf-inference/models/"
@@ -44,11 +45,15 @@ class Retriever:
 
         query_vec = self.get_embedding(query)
 
+        # retrieve more candidates than needed
         distances, indices = self.index.search(query_vec, k * 10)
 
-        results = []
+        MAX_CHARS_PER_CHUNK = 500
 
-        for i in indices[0]:
+        results = []
+        seen_urls = set()
+
+        for distance, i in zip(distances[0], indices[0]):
 
             if i >= len(self.documents):
                 continue
@@ -59,17 +64,56 @@ class Retriever:
                 if source.get("topic") != topic_filter:
                     continue
 
-            results.append({"text": self.documents[i], "source": source})
+            # deduplicate by source URL
+            url = source.get("url")
+
+            if url and url in seen_urls:
+                continue
+
+            if url:
+                seen_urls.add(url)
+
+            results.append(
+                {
+                    "text": self.documents[i][:MAX_CHARS_PER_CHUNK],
+                    "source": source,
+                    "score": float(distance),
+                }
+            )
+
+            # dynamic k
+            if len(results) == 1:
+                first_score = float(distance)
+
+            elif len(results) >= 2:
+                score_gap = abs(first_score - float(distance))
+
+                # if additional chunks are much less relevant,
+                # stop early and save tokens
+                if score_gap > 0.15:
+                    break
 
             if len(results) == k:
                 break
+        log_event(
+            "TOP_SCORE",
+            topScore=results[0]["score"] if results else "NONE",
+        )
+        if results:
+            results[0]["is_low_confidence"] = results[0]["score"] > 1.0
 
-        # fallback (IMPORTANT)
+        # fallback
         if not results:
             for i in indices[0][:k]:
-                if i < len(self.documents):
-                    results.append(
-                        {"text": self.documents[i], "source": self.sources[i]}
-                    )
+
+                if i >= len(self.documents):
+                    continue
+
+                results.append(
+                    {
+                        "text": self.documents[i][:MAX_CHARS_PER_CHUNK],
+                        "source": self.sources[i],
+                    }
+                )
 
         return results
