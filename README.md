@@ -4,8 +4,10 @@ A full-stack RAG chatbot that answers questions about AWS services and architect
 
 **[Live Demo →](https://d3nw1hzdw4124c.cloudfront.net/)**
 
-![Status](https://img.shields.io/badge/status-in%20progress-orange) ![Stack](https://img.shields.io/badge/stack-React%20%7C%20Python%20%7C%20AWS-232F3E?logo=amazonaws) ![License](https://img.shields.io/badge/license-MIT-green) ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/Shagnikpaul/awsense/.github%2Fworkflows%2Fci.yml?label=ci-workflow)
- ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/Shagnikpaul/awsense/.github%2Fworkflows%2Fdeploy.yml?label=deploy-workflow)
+![Status](https://img.shields.io/badge/status-in%20progress-orange) ![Stack](https://img.shields.io/badge/stack-React%20%7C%20Python%20%7C%20AWS-232F3E?logo=amazonaws) ![License](https://img.shields.io/badge/license-MIT-green) 
+---
+[![CI](https://github.com/Shagnikpaul/awsense/actions/workflows/ci.yml/badge.svg)](https://github.com/Shagnikpaul/awsense/actions/workflows/ci.yml)
+ [![CD](https://github.com/Shagnikpaul/awsense/actions/workflows/deploy.yml/badge.svg)](https://github.com/Shagnikpaul/awsense/actions/workflows/deploy.yml)
 
 
 ---
