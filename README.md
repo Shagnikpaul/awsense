@@ -12,31 +12,106 @@ A full-stack RAG chatbot that answers questions about AWS services and architect
 
 ## Overview
 
-AWSense takes a natural language question about AWS, retrieves the most relevant chunks from a local knowledge base built from official AWS documentation, and generates a cited answer using an LLM. Built as a 1-month project alongside AWS Solutions Architect Associate (SAA-C03) study.
+AWSense takes a natural language question about AWS, retrieves relevant chunks from a FAISS vector index built from official AWS documentation, and generates a cited answer using an LLM. Built as a 1-month project alongside AWS Solutions Architect Associate (SAA-C03) study.
+
 
 
 
 ---
+## Screenshots
+#### Default Starting Page
+![Default Page](/docs/screenshots/DefaultPage.png)
 
-## Architecture
+#### Chat Window
+![Chat Window](/docs/screenshots/ChatWindow.png)
 
+#### Topic Selection Menu
+![Topic Selection drop down menu](/docs/screenshots/TopicSelection.png)
+---
+
+
+
+## Architecture Diagram
+
+
+```mermaid
+flowchart TD
+    User["User Browser"]
+
+    subgraph Frontend["Frontend"]
+        S3F["S3 — Static Hosting"]
+        CF["CloudFront CDN"]
+    end
+
+    subgraph API["API Layer"]
+        APIGW["API Gateway — HTTP API + API Key"]
+    end
+
+    subgraph Compute["Lambda — Python 3.12"]
+        Greet["Greeting Detection"]
+        Retriever["Retriever — FAISS + HF Embeddings"]
+        Prompt["Prompt Builder"]
+        LLM["LLM Chat — Groq llama-3.1-8b"]
+        Throttle["Throttle Check"]
+        ChatHistory["Chat History Writer"]
+    end
+
+    subgraph Storage["Storage"]
+        FAISSIdx["FAISS Index — bundled in Lambda"]
+        DocsS3["S3 — AWS Docs Source"]
+        SessionsDB["DynamoDB — sessions (rate limit/tokens)"]
+        ChatsDB["DynamoDB — awsense-chats (TTL 30d)"]
+    end
+
+    subgraph External["External APIs"]
+        HF["Hugging Face Inference API"]
+        Groq["Groq API"]
+    end
+
+    subgraph Monitoring["Monitoring"]
+        CW["CloudWatch — Logs + Metrics"]
+    end
+
+    User --> CF --> S3F
+    User --> APIGW --> Greet
+    Greet -->|"not a greeting"| Throttle
+    Throttle -->|"within limits"| Retriever
+    Throttle -->|"limit exceeded"| APIGW
+    Retriever --> HF
+    Retriever --> FAISSIdx
+    Retriever --> Prompt --> LLM --> Groq
+    LLM --> ChatHistory
+    ChatHistory --> ChatsDB
+    Throttle --> SessionsDB
+    DocsS3 -.->|"offline index build"| FAISSIdx
+    Compute --> CW
+
+    classDef frontend fill:#EEEDFE,stroke:#534AB7,color:#26215C
+    classDef api fill:#E1F5EE,stroke:#0F6E56,color:#04342C
+    classDef compute fill:#FAECE7,stroke:#993C1D,color:#4A1B0C
+    classDef storage fill:#E6F1FB,stroke:#185FA5,color:#042C53
+    classDef external fill:#FAEEDA,stroke:#854F0B,color:#412402
+    classDef monitor fill:#F1EFE8,stroke:#5F5E5A,color:#2C2C2A
+
+    class S3F,CF frontend
+    class APIGW api
+    class Greet,Retriever,Prompt,LLM,Throttle,ChatHistory compute
+    class FAISSIdx,DocsS3,SessionsDB,ChatsDB storage
+    class HF,Groq external
+    class CW monitor
 ```
-User Browser
-    │
-    ▼
-React Frontend  ──── S3 + CloudFront
-    │
-    ▼
-API Gateway (HTTP API)
-    │
-    ▼
-Lambda (Python 3.12)
-    ├── Hugging Face Inference API   →  query embedding (all-MiniLM-L6-v2)
-    ├── FAISS vector index           →  retrieval over 30+ AWS doc pages
-    └── Groq API (llama-3.1-8b)     →  answer generation
-```
 
-The retrieval layer (`retriever.py`) is fully decoupled from the Lambda entry point. Swapping to Amazon Bedrock when quota is available requires changing one file.
+**Architecture Notes**
+
+- The frontend is a static React build served through CloudFront, with S3 as the origin, caching assets at the edge for fast global delivery.
+- Every request to the backend passes through API Gateway, which enforces API key authentication before reaching Lambda — protecting `/chat` and `/conversations` from unauthenticated traffic.
+- A lightweight greeting detector runs first inside Lambda, short-circuiting trivial inputs like "hi" before any embedding, retrieval, or LLM call — keeping token usage and latency near zero for non-substantive messages.
+- Real AWS questions pass through a throttle check backed by a DynamoDB `sessions` table, which tracks per-session request counts and token usage and rejects requests exceeding configured limits with HTTP 429 — before any external API calls are made.
+- Retrieval is fully local: a FAISS index built offline from 30+ AWS documentation pages is bundled directly inside the Lambda package. The only external call in this step is to Hugging Face's Inference API, which converts the user's query into an embedding vector. No managed vector database is involved.
+- Retrieved context and the user query are assembled into a structured prompt and sent to Groq's API running `openai/gpt-oss-20b` for response generation — chosen specifically because it has no AWS service dependency, sidestepping the Bedrock throttling issues hit early in the project.
+- Every conversation turn (user message and assistant response) is written to a separate DynamoDB table (`awsense-chats`) for persistent chat history. Since sessions are anonymous UUIDs stored in browser localStorage, this table uses a 30-day TTL so orphaned sessions are cleaned up automatically with no manual intervention or ongoing cost.
+- All Lambda invocations emit structured JSON logs and custom metrics to CloudWatch, giving visibility into invocation counts, error rates, latency percentiles, and token usage without a separate logging service.
+
 
 ---
 
@@ -59,42 +134,71 @@ The retrieval layer (`retriever.py`) is fully decoupled from the Lambda entry po
 
 ## Features
 
-- **Semantic retrieval** over 30+ AWS documentation pages covering EC2, S3, VPC, IAM, Lambda, RDS, CloudFront, Route 53, ELB, and CloudWatch
-- **Source citations** — every answer links back to the AWS doc pages it was grounded in
-- **Topic filter** — narrow retrieval to a specific AWS service category
-- **Session history** — last 5 turns kept in context per session
-- **Token usage** shown per response
-- **Rate limiting** — 20 requests per session per hour; banner shown on threshold hit
+- Semantic retrieval over 30+ AWS documentation pages
+- Topic filter for AWS services
+- Source citations from official AWS documentation
+- Token usage per response
+- Request rate limiting (20 requests/client/hour)
+- Persistent conversations stored in DynamoDB
+- Conversation sidebar with previous chats
+- Conversation history restoration across browser refreshes
 
 ---
 
 ## Project Structure
 
-```
+```text
 awsense/
-├── frontend/               # React + Vite application
+├── frontend/                     # React + Vite application
+│   ├── public/
 │   └── src/
-│       ├── components/     # ChatWindow, MessageBubble, InputBar, Sidebar, etc.
-│       ├── api/            # chatClient.js — sole backend integration layer
-│       └── hooks/          # useChat.js — session state management
+│       ├── api/                  # Backend API client
+│       ├── components/           # Chat UI components
+│       ├── hooks/                # Custom React hooks
+│       ├── pages/
+│       ├── utils/
+│       └── main.jsx
+│
 ├── backend/
 │   ├── src/
-│   │   ├── handler.py          # Lambda entry point
-│   │   ├── retriever.py        # FAISS lookup + HF embedding API
+│   │   ├── handler.py            # Lambda entry point
+│   │   ├── llm_chat.py           # OpenAI GPT-OSS inference
+│   │   ├── retriever.py          # FAISS retrieval + HF embeddings
 │   │   ├── prompt_builder.py
+│   │   ├── response_formatter.py
 │   │   ├── validator.py
-│   │   └── response_formatter.py
-│   └── tests/
-│       ├── unit/
-│       └── integration/
-├── infra/                  # AWS CDK stacks
+│   │   ├── query_classifier.py
+│   │   ├── throttle.py           # Rate limiting
+│   │   ├── chat_history.py       # Persistent conversations
+│   │   ├── metrics.py            # CloudWatch custom metrics
+│   │   └── logger.py
+│   │
+│   ├── tests/
+│   │   ├── unit/
+│   │   └── integration/
+│   │
+│   ├── vector_store/
+│   │   ├── awsense.index
+│   │   └── documents.pkl
+│   │
+│   └── python_packages/          # Vendored Lambda dependencies
+│
+├── infra/                        # AWS CDK infrastructure
+│
 ├── scripts/
-│   ├── build_vector_store.py   # builds FAISS index from .txt docs
-│   └── ingest_docs.py          # downloads AWS docs → S3
-├── k6/                     # performance test scripts
-└── reports/                # coverage + SLA reports
+│   ├── ingest_docs.py
+│   ├── build_vector_store.py
+│   └── clean_documents.py
+│
+├── docs/                         # AWS documentation source files
+│
+├── k6/                           # Performance/load tests
+│
+├── reports/                      # Coverage & SLA reports
+│
 └── .github/
     └── workflows/
+        ├── ci.yml
         └── deploy.yml
 ```
 
@@ -152,29 +256,160 @@ cdk deploy
 ---
 
 ## API Reference
+## API Reference
 
 ### `POST /chat`
 
 ```json
 // Request
-{ "message": "How does S3 versioning work?", "sessionId": "uuid", "topicFilter": "S3" }
-
-// Response
 {
-  "answer": "S3 versioning lets you preserve, retrieve, and restore...",
-  "sources": [{ "title": "Using versioning in S3 buckets", "url": "https://docs.aws.amazon.com/..." }],
-  "tokenUsage": { "inputTokens": 312, "outputTokens": 128 }
+  "message": "How does S3 versioning work?",
+  "clientId": "client-123",
+  "conversationId": "conversation-456",
+  "topicFilter": "S3"
 }
 ```
+
+```json
+// Response
+{
+  "answer": "S3 versioning lets you preserve, retrieve, and restore every version of an object stored in a bucket.",
+  "sources": [
+    "https://docs.aws.amazon.com/AmazonS3/latest/userguide/Versioning.html"
+  ],
+  "token_usage": {
+    "inputTokens": 312,
+    "outputTokens": 128
+  }
+}
+```
+
+---
+
+### `GET /conversations`
+
+Returns all conversations belonging to a client.
+
+**Headers**
+
+```
+x-api-key: <API_KEY>
+x-client-id: client-123
+```
+
+```json
+[
+  {
+    "conversationId": "conversation-456",
+    "clientId": "client-123",
+    "title": "How does S3 versioning work?",
+    "createdAt": "2026-06-30T10:15:42Z",
+    "updatedAt": "2026-06-30T10:20:18Z"
+  }
+]
+```
+
+---
+
+### `GET /conversations/{conversationId}`
+
+Returns all messages in a conversation.
+
+**Headers**
+
+```
+x-api-key: <API_KEY>
+x-client-id: client-123
+```
+
+```json
+[
+  {
+    "role": "user",
+    "content": "What is Amazon S3?",
+    "sources": [],
+    "tokenUsage": {},
+    "timestamp": "2026-06-30T10:15:42Z"
+  },
+  {
+    "role": "assistant",
+    "content": "Amazon S3 is an object storage service...",
+    "sources": [
+      "https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html"
+    ],
+    "tokenUsage": {
+      "inputTokens": 797,
+      "outputTokens": 247
+    },
+    "timestamp": "2026-06-30T10:15:44Z"
+  }
+]
+```
+
+---
 
 ### `GET /health`
 
 ```json
-{ "status": "ok", "retriever": "local-faiss", "inference": "groq-llama3" }
+{
+  "status": "healthy",
+  "service": "AWSense"
+}
 ```
 
-Requests exceeding 20/session/hour return `HTTP 429` with a `retry-after` header. Errors always return `{ "error", "code", "requestId" }` — never raw stack traces.
+---
 
+### Error Responses
+
+Requests exceeding **20 requests per client per hour** return **HTTP 429** with a `Retry-After` header.
+
+Common error responses:
+
+```json
+{
+  "error": "Unauthorized"
+}
+```
+
+```json
+{
+  "error": "Conversation not found"
+}
+```
+
+```json
+{
+  "error": "Rate limit exceeded",
+  "code": "RATE_LIMITED",
+  "requestId": "..."
+}
+```
+
+The API never returns raw stack traces to clients.
+
+
+## Testing
+
+### Backend
+- Unit Tests (pytest)
+- Integration Tests (pytest)
+
+### Frontend
+- Component & API Tests (Vitest)
+
+### Performance
+- k6 load testing
+
+Coverage includes:
+
+- Retriever
+- Prompt Builder
+- Handler
+- Chat History
+- Validator
+- Query Classifier
+- Response Formatter
+- Persistent Conversation APIs
 
 
 ---
@@ -195,20 +430,20 @@ The vector store is generated dynamically during CI/CD and bundled into the Lamb
 
 ### Environment Variables
 
-No secrets are committed to this repo. Production secrets are managed through GitHub Actions secrets and Lambda environment variables.
+No secrets are committed to this repository. Production secrets are managed through GitHub Actions secrets and Lambda environment variables.
 
-| Variable              | Description                                 |
-| --------------------- | ------------------------------------------- |
-| `GROQ_API_KEY`        | Groq API key for LLM inference              |
-| `HF_TOKEN`            | Hugging Face token for embedding API        |
-| `API_KEY`             | API authentication key for `/chat` endpoint |
-| `VITE_API_BASE_URL`   | Frontend API Gateway base URL               |
-| `VITE_API_KEY`        | Frontend API access key                     |
-| `AWS_REGION`          | Deployment region                           |
-| `CDK_DEFAULT_ACCOUNT` | AWS account for CDK deployment              |
-| `CDK_DEFAULT_REGION`  | AWS region for CDK deployment               |
-
-
+| Variable | Description |
+|----------|-------------|
+| `OPENAI_API_KEY` | API key for OpenAI-compatible LLM inference (`openai/gpt-oss-20b`) |
+| `HF_TOKEN` | Hugging Face token for embedding generation (`all-MiniLM-L6-v2`) |
+| `API_KEY` | API authentication key for backend endpoints |
+| `CONVERSATIONS_TABLE` | DynamoDB table storing conversation metadata |
+| `CHAT_MESSAGES_TABLE` | DynamoDB table storing chat messages |
+| `VITE_API_BASE_URL` | API Gateway base URL used by the frontend |
+| `VITE_API_KEY` | API key used by the frontend |
+| `AWS_REGION` | AWS deployment region |
+| `CDK_DEFAULT_ACCOUNT` | AWS account ID used by CDK |
+| `CDK_DEFAULT_REGION` | AWS region used by CDK |
 
 
 ---
@@ -216,12 +451,26 @@ No secrets are committed to this repo. Production secrets are managed through Gi
 ## Known Limitations
 
 - Bedrock inference not yet active — pending quota resolution from AWS support
-- No persistent session history — conversation resets on page refresh
+- Using Groq API now with low token and requests limit so frequent 429 errors are expected.
 
 
 ---
 
+## Cost Summary
 
+| Service | Week 1 | Week 2 | Week 3 | Week 4 | Total |
+|---|---|---|---|---|---|
+| Amazon S3 | Free tier | Free tier | Free tier | Free tier | $0.00 |
+| CloudFront | — | Free tier | Free tier | Free tier | $0.00 |
+| API Gateway | Free tier | Free tier | Free tier | Free tier | $0.00 |
+| AWS Lambda | Free tier | Free tier | Free tier | Free tier | $0.00 |
+| DynamoDB | — | — | Free tier | Free tier | $0.00 |
+| CloudWatch | Free tier | Free tier | Free tier | Free tier | $0.00 |
+| Groq API (LLM inference) | — | — | Free tier | Free tier | $0.00 |
+| Hugging Face Inference API (embeddings) | — | — | Free tier | Free tier | $0.00 |
+| **Total** | | | | | **$0.00** |
+
+> **Note:** AWSense was originally designed around Amazon Bedrock (Claude Haiku for inference, Titan Embeddings + OpenSearch Serverless for retrieval). Persistent throttling on Bedrock in Week 1 led to a pivot toward Groq's LLM API and Hugging Face's Inference API, both of which remained entirely within free-tier limits for the duration of the project. All AWS-native services used (S3, CloudFront, API Gateway, Lambda, DynamoDB, CloudWatch) also stayed within AWS Free Tier throughout. Total infrastructure cost for the project: **$0.00**.
 
 ## Architecture Decisions
 
@@ -235,17 +484,6 @@ Keeps the entire retrieval pipeline within one compute unit — no external vect
 
 ---
 
-
-
-## Build Progress
-
-| Week                           | Goal                                                                       | Status     |
-| ------------------------------ | -------------------------------------------------------------------------- | ---------- |
-| 1 — Foundation                 | Backend, RAG pipeline, unit tests                                          | ✅ Complete |
-| 2 — Frontend + CI/CD           | Frontend deployment, GitHub Actions automation, vector generation pipeline | ✅ Complete |
-| 3 — Platform Hardening         | Throttling system, observability, CI/CD multi-branch deployment, vector store refactor (JSON-driven ingestion) | ✅ Complete |
-| 4 — Testing + Docs             | k6 performance tests, SLA report, architecture diagrams                    | ⏳ Planned  |
----
 
 ## License
 

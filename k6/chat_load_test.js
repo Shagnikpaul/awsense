@@ -1,26 +1,10 @@
 import http from "k6/http";
-import { check } from "k6";
-import { sleep } from "k6";
-import exec from "k6/execution";
+import { check, sleep } from "k6";
 import { Counter } from "k6/metrics";
 
 const requestCounter = new Counter("chat_requests");
 
-
-
-
 export const options = {
-  // stages: [
-  //   // failed
-  //   // { duration: "30s", target: 10 },
-  //   // { duration: "2m", target: 10 },
-  //   // { duration: "30s", target: 0 },
-
-  //   { duration: "30s", target: 3 },
-  //   { duration: "2m", target: 3 },
-  //   { duration: "30s", target: 0 },
-  // ],
-
   thresholds: {
     http_req_duration: [
       "p(50)<6000",
@@ -30,7 +14,7 @@ export const options = {
   },
 
   scenarios: {
-    chat: {
+    persistent_chat_flow: {
       executor: "constant-arrival-rate",
       rate: 5,
       timeUnit: "1m",
@@ -44,29 +28,107 @@ export const options = {
 const BASE_URL = __ENV.API_BASE_URL;
 const API_KEY = __ENV.API_KEY;
 
+const headers = {
+  "Content-Type": "application/json",
+  "x-api-key": API_KEY,
+};
+
 export default function () {
-  const payload = JSON.stringify({
-    // sessionId: "k6-load-test-session", since single session id is resulting in RateLimitExceeded error
-    //sessionId: `k6-session-${exec.vu.idInTest}`, // realistic scenario many different users requesting 
-    sessionId: `k6-session-${__VU}`, // all unique sessions
-    message: "What is Amazon S3 and when should I use it?",
-    topicFilter: "Amazon S3",
-  });
+  const clientId = `k6-client-${__VU}`;
+  const conversationId = `k6-conversation-${__VU}`;
 
-  const params = {
-    headers: {
-      "Content-Type": "application/json",
-      "x-api-key": API_KEY,
+  const questions = [
+    "What is Amazon S3?",
+    "How is Amazon S3 different from Amazon EBS?",
+    "When should I use Amazon S3 Standard?",
+  ];
+
+  // -------------------------
+  // Send multiple chat messages
+  // -------------------------
+  for (const question of questions) {
+    const payload = JSON.stringify({
+      clientId,
+      conversationId,
+      message: question,
+      topicFilter: "Amazon S3",
+    });
+
+    const response = http.post(
+      `${BASE_URL}/chat`,
+      payload,
+      { headers },
+    );
+
+    requestCounter.add(1);
+
+    check(response, {
+      "chat status is 200": (r) => r.status === 200,
+      "chat has answer": (r) => {
+        const body = r.json();
+        return body.answer !== undefined;
+      },
+      "chat has sources": (r) => {
+        const body = r.json();
+        return Array.isArray(body.sources);
+      },
+    });
+
+    if (response.status !== 200) {
+      console.log(`POST /chat failed (${response.status})`);
+      console.log(response.body);
+    }
+
+    sleep(1);
+  }
+
+  // -------------------------
+  // Get conversation list
+  // -------------------------
+  const conversations = http.get(
+    `${BASE_URL}/conversations`,
+    {
+      headers: {
+        "x-api-key": API_KEY,
+        "x-client-id": clientId,
+      },
     },
-  };
-
-  const response = http.post(
-    `${BASE_URL}/chat`,
-    payload,
-    params
   );
+
   requestCounter.add(1);
-  check(response, {
-    "status is 200": (r) => r.status === 200,
+
+  check(conversations, {
+    "conversation list status is 200": (r) => r.status === 200,
+    "conversation list is array": (r) => Array.isArray(r.json()),
   });
+
+  if (conversations.status !== 200) {
+    console.log(`GET /conversations failed (${conversations.status})`);
+    console.log(conversations.body);
+  }
+
+  // -------------------------
+  // Get conversation history
+  // -------------------------
+  const history = http.get(
+    `${BASE_URL}/conversations/${conversationId}`,
+    {
+      headers: {
+        "x-api-key": API_KEY,
+        "x-client-id": clientId,
+      },
+    },
+  );
+
+  requestCounter.add(1);
+
+  check(history, {
+    "conversation history status is 200": (r) => r.status === 200,
+    "conversation history is array": (r) => Array.isArray(r.json()),
+  });
+
+  if (history.status !== 200) {
+    console.log(`GET /conversations/{id} failed (${history.status})`);
+    console.log(history.body);
+  }
 }
