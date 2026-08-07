@@ -39,10 +39,7 @@ class Retriever:
 
         return np.array(embedding, dtype=np.float32)
 
-    def search(self, query: str, k: int = 3, topic_filter: str = None):
-        if topic_filter and topic_filter != "All":
-            query = f"AWS Service: {topic_filter}\nUser Question: {query}"
-
+    def search(self, query: str, k: int = 5, topic_filter: str = None):
         query_vec = self.get_embedding(query)
 
         # retrieve more candidates than needed
@@ -80,18 +77,6 @@ class Retriever:
                     "score": float(distance),
                 }
             )
-
-            # dynamic k
-            if len(results) == 1:
-                first_score = float(distance)
-
-            elif len(results) >= 2:
-                score_gap = abs(first_score - float(distance))
-
-                # if additional chunks are much less relevant,
-                # stop early and save tokens
-                if score_gap > 0.15:
-                    break
 
             if len(results) == k:
                 break
